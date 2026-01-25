@@ -1,0 +1,57 @@
+# AI Compliance Platform - Docker Compose Configuration
+# Sample deployment setup for local development
+
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=ai-compliance-platform-secret-key-change-in-production
+      - DATABASE_URL=ai_compliance.db
+    volumes:
+      - ./backend:/app
+      - backend_data:/app/data
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - ai-compliance-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm start
+    depends_on:
+      - backend
+    networks:
+      - ai-compliance-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - ai-compliance-network
+
+volumes:
+  backend_data:
+
+networks:
+  ai-compliance-network:
+    driver: bridge
