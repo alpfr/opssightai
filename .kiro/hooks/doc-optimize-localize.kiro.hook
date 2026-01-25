@@ -1,0 +1,24 @@
+{
+  "enabled": true,
+  "name": "Document, Optimize & Localize",
+  "description": "Automatically reviews edited files to update documentation, optimize code performance, and ensure proper language localization support",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.js",
+      "*.jsx",
+      "*.ts",
+      "*.tsx",
+      "*.py",
+      "*.yml",
+      "*.yaml",
+      "*.md",
+      "*.json"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review the edited file and: 1) Update or add documentation (comments, README sections, API docs) as needed, 2) Identify and implement code optimizations for performance and maintainability, 3) Check for hardcoded strings and suggest internationalization/localization improvements, 4) Ensure consistent coding standards across the multi-language codebase"
+  }
+}
