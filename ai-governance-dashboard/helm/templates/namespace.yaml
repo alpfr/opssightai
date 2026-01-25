@@ -1,0 +1,33 @@
+{{- if .Values.namespace.create }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace.name }}
+  labels:
+    {{- with .Values.namespace.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- include "ai-governance-dashboard.labels" . | nindent 4 }}
+---
+{{- if .Values.namespace.resourceQuota.enabled }}
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ include "ai-governance-dashboard.fullname" . }}-quota
+  namespace: {{ .Values.namespace.name }}
+spec:
+  hard:
+    {{- toYaml .Values.namespace.resourceQuota.hard | nindent 4 }}
+---
+{{- end }}
+{{- if .Values.namespace.limitRange.enabled }}
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: {{ include "ai-governance-dashboard.fullname" . }}-limits
+  namespace: {{ .Values.namespace.name }}
+spec:
+  limits:
+    {{- toYaml .Values.namespace.limitRange.limits | nindent 4 }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,27 @@
+version: '3.8'
+
+# Staging overrides for AI Governance Dashboard
+services:
+  ai-governance-dashboard:
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_ENV=staging
+      - GENERATE_SOURCEMAP=true
+    ports:
+      - "3001:80"  # Different port for staging
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ai-dashboard-staging.rule=Host(`staging-ai-dashboard.yourdomain.com`)"
+      - "traefik.http.services.ai-dashboard-staging.loadbalancer.server.port=80"
+
+  # Staging-specific monitoring
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower-staging
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=300
+      - WATCHTOWER_INCLUDE_STOPPED=true
+    restart: unless-stopped

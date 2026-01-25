@@ -1,0 +1,134 @@
+name: Deploy to EKS
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+
+env:
+  AWS_REGION: us-west-2
+  CLUSTER_NAME: ai-governance-cluster
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'staging' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build and push Docker image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ai-governance-dashboard
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+    
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.0'
+    
+    - name: Install Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: 'v3.12.0'
+    
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.CLUSTER_NAME }}
+    
+    - name: Deploy to EKS
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ai-governance-dashboard
+        IMAGE_TAG: ${{ github.sha }}
+        ENVIRONMENT: ${{ github.event.inputs.environment || 'staging' }}
+      run: |
+        # Create values file for environment
+        cat > values-${ENVIRONMENT}.yaml << EOF
+        image:
+          repository: ${ECR_REGISTRY}/${ECR_REPOSITORY}
+          tag: ${IMAGE_TAG}
+        
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: alb
+            alb.ingress.kubernetes.io/scheme: internet-facing
+            alb.ingress.kubernetes.io/target-type: ip
+            alb.ingress.kubernetes.io/healthcheck-path: /health
+          hosts:
+            - host: ai-governance-${ENVIRONMENT}.yourdomain.com
+              paths:
+                - path: /
+                  pathType: Prefix
+        
+        env:
+          NODE_ENV: ${ENVIRONMENT}
+          REACT_APP_ENV: ${ENVIRONMENT}
+        
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        
+        autoscaling:
+          enabled: true
+          minReplicas: $([ "$ENVIRONMENT" = "production" ] && echo "3" || echo "2")
+          maxReplicas: $([ "$ENVIRONMENT" = "production" ] && echo "10" || echo "5")
+        EOF
+        
+        # Deploy with Helm
+        helm upgrade --install ai-governance-dashboard ./helm \
+          --namespace ai-governance \
+          --create-namespace \
+          --values values-${ENVIRONMENT}.yaml \
+          --wait --timeout=10m
+    
+    - name: Verify deployment
+      run: |
+        kubectl get pods -n ai-governance
+        kubectl get services -n ai-governance
+        kubectl get ingress -n ai-governance
+        
+        # Wait for pods to be ready
+        kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=ai-governance-dashboard -n ai-governance --timeout=300s
+        
+        # Get application URL
+        echo "Application URL:"
+        kubectl get ingress -n ai-governance ai-governance-dashboard -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' || echo "Load balancer URL not yet available"
