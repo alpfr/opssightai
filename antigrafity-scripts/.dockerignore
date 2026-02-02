@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment files (use .env.example instead)
+.env
+.env.local
+server/.env
+
+# Development files
+.git/
+.gitignore
+*.md
+!README.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+client/dist/
+*.log
+
+# Test files
+*.test.js
+__tests__/
+
+# Uploads (temporary files)
+server/uploads/
+uploads/
