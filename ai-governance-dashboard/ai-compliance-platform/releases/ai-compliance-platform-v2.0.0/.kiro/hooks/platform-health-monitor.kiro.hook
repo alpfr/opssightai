@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Platform Health Monitor",
+  "description": "Monitors the AI Compliance Platform services and automatically restarts them if they become unresponsive",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "./health-check.sh || ./keep-alive.sh restart"
+  }
+}

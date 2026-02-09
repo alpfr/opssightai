@@ -1,0 +1,21 @@
+{{- if .Values.database.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-compliance-db
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ai-compliance.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  type: {{ .Values.database.service.type }}
+  clusterIP: None
+  ports:
+  - port: {{ .Values.database.service.port }}
+    targetPort: {{ .Values.database.service.targetPort }}
+    protocol: TCP
+    name: postgresql
+  selector:
+    {{- include "ai-compliance.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+{{- end }}

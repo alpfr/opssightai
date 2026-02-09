@@ -1,0 +1,131 @@
+{
+  "name": "ai-compliance-platform",
+  "version": "2.0.0",
+  "description": "Production-ready AI compliance platform with advanced LLM assessment capabilities, executive analytics, and continuous operation",
+  "main": "backend/main.py",
+  "scripts": {
+    "start": "./keep-alive.sh start",
+    "stop": "./keep-alive.sh stop",
+    "restart": "./keep-alive.sh restart",
+    "status": "./keep-alive.sh status",
+    "monitor": "./keep-alive.sh monitor",
+    "logs": "./keep-alive.sh logs",
+    "health": "./health-check.sh",
+    "manage": "./platform-manager.sh",
+    "setup": "./setup-continuous-operation.sh",
+    "setup-service": "./setup-system-service.sh",
+    "dev:backend": "cd backend && source venv/bin/activate && python main.py",
+    "dev:frontend": "cd frontend && PORT=3001 npm start",
+    "install:backend": "cd backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt",
+    "install:frontend": "cd frontend && npm install",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && source venv/bin/activate && python -m pytest",
+    "test:frontend": "cd frontend && npm test",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-org/ai-compliance-platform.git"
+  },
+  "keywords": [
+    "ai",
+    "compliance",
+    "llm",
+    "assessment",
+    "guardrails",
+    "regulatory",
+    "dashboard",
+    "executive",
+    "monitoring",
+    "fastapi",
+    "react",
+    "material-ui",
+    "continuous-operation"
+  ],
+  "author": "AI Compliance Platform Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/your-org/ai-compliance-platform/issues"
+  },
+  "homepage": "https://github.com/your-org/ai-compliance-platform#readme",
+  "engines": {
+    "node": ">=16.0.0",
+    "python": ">=3.8.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "dependencies": {
+    "backend": "file:./backend",
+    "frontend": "file:./frontend"
+  },
+  "devDependencies": {},
+  "config": {
+    "backend_port": 8000,
+    "frontend_port": 3001,
+    "health_check_interval": 30,
+    "max_retries": 3
+  },
+  "platform": {
+    "status": "production-ready",
+    "deployment": "continuous-operation",
+    "monitoring": "24/7",
+    "auto_start": "configured"
+  },
+  "features": {
+    "llm_assessment": {
+      "status": "complete",
+      "models": 7,
+      "industries": 4,
+      "completion": "100%"
+    },
+    "executive_dashboard": {
+      "status": "complete",
+      "views": 2,
+      "kpis": "12+",
+      "completion": "100%"
+    },
+    "continuous_operation": {
+      "status": "active",
+      "auto_start": true,
+      "self_healing": true,
+      "monitoring": "30s",
+      "completion": "100%"
+    },
+    "management_tools": {
+      "status": "complete",
+      "interactive_manager": true,
+      "health_checks": true,
+      "system_service": true,
+      "completion": "100%"
+    }
+  },
+  "services": {
+    "backend": {
+      "url": "http://localhost:8000",
+      "status": "healthy",
+      "technology": "FastAPI",
+      "database": "SQLite"
+    },
+    "frontend": {
+      "url": "http://localhost:3001",
+      "status": "healthy",
+      "technology": "React",
+      "ui_framework": "Material-UI"
+    }
+  },
+  "access": {
+    "frontend_url": "http://localhost:3001",
+    "backend_url": "http://localhost:8000",
+    "api_docs": "http://localhost:8000/docs",
+    "default_credentials": {
+      "username": "admin",
+      "password": "admin123"
+    }
+  }
+}

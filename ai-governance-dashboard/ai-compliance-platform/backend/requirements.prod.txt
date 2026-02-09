@@ -1,0 +1,26 @@
+# AI Compliance Platform Backend Dependencies - Production
+
+# FastAPI and ASGI server
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+
+# Authentication and security
+PyJWT==2.10.1
+python-multipart==0.0.20
+
+# Database - PostgreSQL for production
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.23
+
+# Data validation and serialization
+pydantic==2.10.5
+
+# HTTP client for external API calls
+httpx==0.28.1
+
+# Production deployment
+gunicorn==23.0.0
+python-dotenv==1.0.1
+
+# Logging and monitoring
+python-json-logger==2.0.7

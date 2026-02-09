@@ -1,0 +1,15 @@
+apiVersion: v2
+name: ai-compliance
+description: AI Compliance Platform - Helm Chart for GKE Deployment
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - ai
+  - compliance
+  - regulatory
+  - llm
+  - governance
+maintainers:
+  - name: AI Compliance Team
+    email: support@aicomplianceplatform.com
