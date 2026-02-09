@@ -1,0 +1,17 @@
+apiVersion: v2
+name: opssightai
+description: OpsSightAI - Operational Risk Intelligence Platform
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - opssightai
+  - risk-intelligence
+  - asset-management
+  - predictive-maintenance
+home: https://github.com/yourusername/opssightai
+sources:
+  - https://github.com/yourusername/opssightai
+maintainers:
+  - name: OpsSightAI Team
+    email: team@opssightai.com

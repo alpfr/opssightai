@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opssightai-config
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    {{- include "opssightai.labels" . | nindent 4 }}
+data:
+  # Database configuration
+  DB_HOST: "opssightai-database"
+  DB_PORT: "5432"
+  DB_NAME: {{ .Values.database.env.POSTGRES_DB | quote }}
+  DB_USER: {{ .Values.database.env.POSTGRES_USER | quote }}
+  
+  # Backend configuration
+  NODE_ENV: {{ .Values.backend.env.NODE_ENV | quote }}
+  PORT: {{ .Values.backend.env.PORT | quote }}
+  
+  # Frontend configuration
+  REACT_APP_API_URL: {{ .Values.frontend.env.REACT_APP_API_URL | quote }}
