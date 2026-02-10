@@ -1,0 +1,174 @@
+# AI Compliance Platform - SQLite Deployment Values
+# Quick deployment configuration using SQLite
+
+# Global settings
+global:
+  environment: production
+  domain: aicompliance.opssightai.com
+
+# Frontend configuration
+frontend:
+  enabled: true
+  replicaCount: 2
+  
+  image:
+    repository: gcr.io/alpfr-splunk-integration/ai-compliance-frontend
+    tag: latest
+    pullPolicy: Always
+  
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 80
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 80
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 80
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+# Backend configuration (SQLite version)
+backend:
+  enabled: true
+  replicaCount: 1  # SQLite only supports single writer
+  
+  image:
+    repository: gcr.io/alpfr-splunk-integration/ai-compliance-backend
+    tag: latest
+    pullPolicy: Always
+  
+  service:
+    type: ClusterIP
+    port: 8000
+    targetPort: 8000
+  
+  persistence:
+    enabled: true
+    storageClass: standard
+    size: 10Gi
+    accessMode: ReadWriteOnce
+  
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  
+  autoscaling:
+    enabled: false  # Disabled for SQLite (single instance)
+  
+  env:
+    ENVIRONMENT: production
+    LOG_LEVEL: INFO
+    CORS_ORIGINS: "https://aicompliance.opssightai.com,https://opssightai.com,http://aicompliance.opssightai.com"
+    DATABASE_URL: "/app/data/ai_compliance.db"
+  
+  secrets:
+    jwtSecret: ""  # Set via --set or secrets file
+  
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 8000
+    initialDelaySeconds: 40
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 8000
+    initialDelaySeconds: 20
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+# Database configuration (disabled for SQLite)
+database:
+  enabled: false
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: gce
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "ai-compliance-ip"
+    networking.gke.io/managed-certificates: "ai-compliance-ssl-cert"
+    kubernetes.io/ingress.allow-http: "true"
+  
+  hosts:
+    - host: aicompliance.opssightai.com
+      paths:
+        - path: /api
+          pathType: Prefix
+          backend:
+            service:
+              name: ai-compliance-backend
+              port: 8000
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: ai-compliance-frontend
+              port: 80
+  
+  tls: []
+
+# Service Account
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ai-compliance-sa
+
+# Pod Security
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  fsGroup: 1001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: false
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}

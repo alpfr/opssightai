@@ -1,0 +1,12 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: ai-compliance-ssl-cert
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ai-compliance.labels" . | nindent 4 }}
+spec:
+  domains:
+    - {{ .Values.global.domain }}
+{{- end }}
