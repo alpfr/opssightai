@@ -1,19 +1,79 @@
-# AI Governance Dashboard
+# AI Governance & Compliance Platform Suite
 
-A React-based AI Governance Dashboard MVP for managing AI model compliance and risk assessment. This application provides a comprehensive solution for organizations to track, monitor, and ensure compliance of their AI models according to regulatory requirements like the EU AI Act.
+A comprehensive suite of AI governance and compliance solutions for managing AI model compliance, risk assessment, and regulatory oversight.
 
-> **🎯 Demo-Ready**: Professional demonstration platform with interactive tour, realistic data, and role-based workflows
+> **🎯 Production-Ready**: Two enterprise platforms deployed on Google Kubernetes Engine
 
-[![CI/CD Pipeline](https://github.com/your-username/ai-governance-dashboard/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/your-username/ai-governance-dashboard/actions)
-[![Deploy to EKS](https://github.com/your-username/ai-governance-dashboard/workflows/Deploy%20to%20EKS/badge.svg)](https://github.com/your-username/ai-governance-dashboard/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![Docker](https://img.shields.io/badge/docker-ready-blue)](https://www.docker.com/)
 [![Kubernetes](https://img.shields.io/badge/kubernetes-ready-326CE5)](https://kubernetes.io/)
 
-> **🚀 Production-Ready**: From local development to enterprise Kubernetes deployment on AWS EKS
+## 🚀 Deployed Platforms
 
-## 🚀 Features
+### AI Compliance Platform ✅ LIVE
+**Production URL**: http://136.110.182.171/  
+**Status**: Fully operational on GKE  
+**Login**: admin/admin123 or inspector/inspector123
+
+A production-ready platform for AI compliance assessment and monitoring:
+- 🤖 **LLM Assessment**: Test 7 AI models (GPT-4, Claude, Gemini, etc.) for compliance
+- 🛡️ **Real-Time Guardrails**: Automated content filtering (PII, regulatory language, bias)
+- 📊 **Executive Dashboard**: Strategic KPIs and risk assessment for C-suite
+- 🛠️ **LLM Management**: Complete AI model lifecycle management (Admin only)
+- 📋 **Compliance Assessments**: Structured evaluation framework with scoring
+- 📝 **Audit Trail**: Regulatory-grade activity logging
+
+**📖 Full Documentation**: [ai-compliance-platform/README.md](./ai-compliance-platform/README.md)
+
+### OpsSightAI ✅ LIVE
+**Production URL**: http://34.57.180.112  
+**Status**: Deployed on GKE  
+
+Industrial operations monitoring and predictive maintenance platform.
+
+**📖 Full Documentation**: [opssightai/README.md](./opssightai/README.md)
+
+---
+
+## AI Governance Dashboard (Local Development)
+
+A React-based AI Governance Dashboard MVP for managing AI model compliance and risk assessment. This application provides a comprehensive solution for organizations to track, monitor, and ensure compliance of their AI models according to regulatory requirements like the EU AI Act.
+
+> **🎯 Demo-Ready**: Professional demonstration platform with interactive tour, realistic data, and role-based workflows
+
+## 📁 Repository Structure
+
+This repository contains multiple AI governance and compliance platforms:
+
+```
+cloudformation/
+├── ai-compliance-platform/    # ✅ PRODUCTION - AI Compliance Platform (GKE)
+│   ├── backend/               # FastAPI backend with SQLite
+│   ├── frontend/              # React frontend with Material-UI
+│   ├── k8s/                   # Kubernetes manifests and Helm charts
+│   └── README.md              # Complete platform documentation
+├── opssightai/                # ✅ PRODUCTION - OpsSightAI Platform (GKE)
+│   ├── backend/               # Node.js/TypeScript backend
+│   ├── frontend/              # React/TypeScript frontend
+│   └── README.md              # Platform documentation
+├── kiro-scripts-review/       # Sermon transcription and content generation
+├── mp3-transcription/         # MP3 transcription service
+├── src/                       # AI Governance Dashboard (local dev)
+├── scripts/                   # Deployment and build scripts
+├── k8s/                       # Kubernetes manifests for EKS
+└── helm/                      # Helm charts for deployments
+```
+
+### Quick Navigation
+- **AI Compliance Platform**: [ai-compliance-platform/](./ai-compliance-platform/) - Production platform on GKE
+- **OpsSightAI**: [opssightai/](./opssightai/) - Industrial operations platform
+- **AI Governance Dashboard**: [src/](./src/) - Local development dashboard
+- **Deployment Scripts**: [scripts/](./scripts/) - Automated deployment tools
+
+---
+
+## 🚀 AI Governance Dashboard Features
 
 ### Core Functionality
 - **Global Risk Overview** - Real-time compliance gauge showing organizational risk level
