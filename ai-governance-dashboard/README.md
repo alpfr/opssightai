@@ -12,8 +12,8 @@ A comprehensive suite of AI governance and compliance solutions for managing AI 
 ## 🚀 Deployed Platforms
 
 ### AI Compliance Platform ✅ LIVE
-**Production URL**: http://136.110.182.171/  
-**Status**: Fully operational on GKE  
+**Production URL**: https://aicompliance.opssightai.com  
+**Status**: Fully operational on GKE with SSL/TLS  
 **Login**: admin/admin123 or inspector/inspector123
 
 A production-ready platform for AI compliance assessment and monitoring:
@@ -27,8 +27,8 @@ A production-ready platform for AI compliance assessment and monitoring:
 **📖 Full Documentation**: [ai-compliance-platform/README.md](./ai-compliance-platform/README.md)
 
 ### OpsSightAI ✅ LIVE
-**Production URL**: http://34.57.180.112  
-**Status**: Deployed on GKE  
+**Production URL**: https://opssightai.com  
+**Status**: Deployed on GKE with SSL/TLS  
 
 Industrial operations monitoring and predictive maintenance platform.
 

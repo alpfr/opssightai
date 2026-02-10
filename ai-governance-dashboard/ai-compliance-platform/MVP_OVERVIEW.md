@@ -160,16 +160,18 @@ Self-managing platform with 24/7 monitoring, auto-restart, and 99.9% uptime.
 - **Schema**: 10+ tables with comprehensive relationships
 
 ### Deployment
-- **Current**: Local deployment with continuous operation
-- **GKE**: Deployed on Google Kubernetes Engine
-- **Access**: http://136.110.182.171/
+- **Current**: Production deployment on Google Kubernetes Engine (GKE)
+- **GKE Cluster**: sermon-slicer-cluster (us-central1)
+- **Access**: https://aicompliance.opssightai.com
+- **SSL/TLS**: Active (Google-managed certificate)
 - **Monitoring**: 24/7 health checks with auto-restart
-- **Scalability**: Ready for enterprise deployment
+- **Scalability**: Auto-scaling enabled (2-10 pods)
+- **Database**: SQLite (PostgreSQL migration planned)
 
 ## 🚀 Getting Started
 
 ### Access the Platform
-**URL**: http://136.110.182.171/
+**URL**: https://aicompliance.opssightai.com
 
 ### Demo Accounts
 | Role | Username | Password |
@@ -288,8 +290,8 @@ Self-managing platform with 24/7 monitoring, auto-restart, and 99.9% uptime.
 - **DEPLOYMENT_COMPLETE.md** - Deployment guide
 
 ### Access
-- **Platform**: http://136.110.182.171/
-- **API Docs**: http://136.110.182.171/api/docs
+- **Platform**: https://aicompliance.opssightai.com
+- **API Docs**: https://aicompliance.opssightai.com/api/docs
 - **Login**: admin/admin123 or inspector/inspector123
 
 ### Contact
@@ -309,8 +311,8 @@ The **AI Compliance Platform MVP** is a production-ready system that:
 - ✅ Operates continuously with 99.9% uptime
 - ✅ Delivers comprehensive audit trails for regulatory compliance
 
-**Status**: ✅ FULLY OPERATIONAL on GKE
-**Access**: http://136.110.182.171/
+**Status**: ✅ FULLY OPERATIONAL on GKE with SSL/TLS
+**Access**: https://aicompliance.opssightai.com
 **Ready**: For immediate use and enterprise deployment
 
 ---

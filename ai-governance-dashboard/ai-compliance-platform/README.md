@@ -25,22 +25,22 @@ A dual-purpose platform that:
 
 ## ✅ **PRODUCTION STATUS: FULLY OPERATIONAL**
 
-**Current Status**: ✅ Running continuously with 24/7 monitoring
-- **Frontend**: http://localhost:3001 ✅ HEALTHY
-- **Backend**: http://localhost:8000 ✅ HEALTHY  
-- **Login**: admin/admin123
+**Current Status**: ✅ Running on GKE with SSL/TLS
+- **Production URL**: https://aicompliance.opssightai.com ✅ LIVE
+- **API Endpoint**: https://aicompliance.opssightai.com/api ✅ SECURE
+- **Login**: admin/admin123 or inspector/inspector123
 - **Version**: 2.1.0 (Production Release with LLM Management)
+- **SSL Certificate**: Active (Google-managed)
 
 ## 🎯 **Quick Start - Ready Now!**
 
-Your platform is **already running** and ready for immediate use:
+Your platform is **live and accessible** at:
 
-1. **🚀 Access Platform**: Go to http://localhost:3001
-2. **🔐 Login**: Use admin/admin123
+1. **🚀 Access Platform**: Go to https://aicompliance.opssightai.com
+2. **🔐 Login**: Use admin/admin123 or inspector/inspector123
 3. **🤖 Test LLM Assessment**: Guardrails → "Test LLM & Content" → Select AI model
 4. **🛠️ Manage AI Models**: LLM Management → Create, edit, delete AI models (Admin only)
 5. **📊 View Executive Dashboard**: Dashboard → Toggle "Executive" view
-6. **🛠️ Manage Platform**: Run `./platform-manager.sh` for interactive management
 
 ## 🏆 **Key MVP Takeaways**
 
@@ -246,44 +246,28 @@ Based on this MVP success and regulatory analysis:
 
 ### ⚡ Instant Setup (Recommended)
 
-**Your platform is already running!** 🎉
+**Your platform is live on GKE!** 🎉
 
-- **Frontend**: http://localhost:3001 ✅ RUNNING
-- **Backend**: http://localhost:8000 ✅ RUNNING
-- **Login**: admin/admin123
+- **Production URL**: https://aicompliance.opssightai.com ✅ LIVE
+- **API Endpoint**: https://aicompliance.opssightai.com/api ✅ SECURE
+- **Login**: admin/admin123 or inspector/inspector123
 
-### 🛠️ Management Tools
+### 🌐 Access the Platform
 
-#### Interactive Manager (One-Click Management)
-```bash
-./platform-manager.sh
-```
-Beautiful interactive interface with real-time status and one-click controls.
-
-#### Continuous Operation
-```bash
-./keep-alive.sh monitor          # Start continuous monitoring
-./setup-system-service.sh        # Setup auto-start on login
-./health-check.sh               # Quick health check
-```
-
-#### System Service (Auto-Start)
-Your platform is configured to:
-- ✅ Start automatically on login
-- ✅ Restart automatically if services crash  
-- ✅ Run continuously in background
-- ✅ Survive system reboots
+Simply open your browser and navigate to:
+- **Main Application**: https://aicompliance.opssightai.com
+- **API Documentation**: https://aicompliance.opssightai.com/api/docs
 
 ### 🎯 Key Features Ready to Use
 
 #### Executive Dashboard
-1. Go to http://localhost:3001
+1. Go to https://aicompliance.opssightai.com
 2. Login: admin/admin123
 3. Click "Dashboard" → Toggle "Executive" view
 4. Explore advanced KPIs, trends, and strategic insights
 
 #### LLM Assessment System
-1. Go to http://localhost:3001
+1. Go to https://aicompliance.opssightai.com
 2. Click "Guardrails" → "Test LLM & Content"
 3. Select from 7 AI models:
    - **GPT-4** (OpenAI) ⭐ Recommended
@@ -296,12 +280,14 @@ Your platform is configured to:
 
 ### 📋 Traditional Setup (If Needed)
 
-If you need to set up from scratch:
+If you need to set up a local development environment:
 
 #### Prerequisites
 - Python 3.8+
 - Node.js 16+
 - Git
+- Docker (optional)
+- kubectl and gcloud CLI (for GKE deployment)
 
 #### Manual Installation
 
@@ -341,17 +327,17 @@ If you need to set up from scratch:
 
 ## 📋 Usage Guide
 
-### 🎯 Quick Access (Platform is Running!)
+### 🎯 Quick Access (Platform is Live!)
 
-**Current Status**: ✅ All services healthy and running
-- **Frontend**: http://localhost:3001
-- **Backend**: http://localhost:8000  
-- **Login**: admin/admin123
+**Current Status**: ✅ All services healthy and running on GKE
+- **Production URL**: https://aicompliance.opssightai.com
+- **API Endpoint**: https://aicompliance.opssightai.com/api
+- **Login**: admin/admin123 or inspector/inspector123
 
 ### 🚀 New Features to Explore
 
 #### Executive Dashboard
-1. **Access**: http://localhost:3001 → Login → Dashboard
+1. **Access**: https://aicompliance.opssightai.com → Login → Dashboard
 2. **Toggle Views**: Switch between "Standard" ↔ "Executive"
 3. **Features**:
    - Strategic KPIs with trend indicators
@@ -361,7 +347,7 @@ If you need to set up from scratch:
    - Strategic initiatives tracking
 
 #### LLM Assessment System
-1. **Access**: http://localhost:3001 → Login → Guardrails
+1. **Access**: https://aicompliance.opssightai.com → Login → Guardrails
 2. **Click**: "Test LLM & Content" button
 3. **Select**: Industry profile (Financial Services, Healthcare, etc.)
 4. **Choose**: AI model from dropdown (7 models available)
@@ -369,7 +355,7 @@ If you need to set up from scratch:
 6. **Results**: View detailed compliance analysis with model info
 
 #### LLM Management System (NEW!)
-1. **Access**: http://localhost:3001 → Login → LLM Management (Admin only)
+1. **Access**: https://aicompliance.opssightai.com → Login → LLM Management (Admin only)
 2. **View Models**: Browse all AI models with advanced filtering and search
 3. **Create Model**: Click the floating "+" button to add new AI models
 4. **Edit Model**: Use the context menu (⋮) to edit existing models
@@ -534,73 +520,91 @@ The LLM Management system provides 9 new REST API endpoints:
 
 ## 🔧 Development
 
-### 🎯 Current Status: READY FOR USE
+### 🎯 Current Status: PRODUCTION ON GKE
 
-**Your platform is already running and ready!** No development setup needed.
+**Your platform is live and accessible!**
 
-- **Frontend**: http://localhost:3001 ✅ RUNNING
-- **Backend**: http://localhost:8000 ✅ RUNNING
-- **Continuous Monitoring**: ✅ ACTIVE
-- **Auto-Start**: ✅ CONFIGURED
+- **Production URL**: https://aicompliance.opssightai.com ✅ LIVE
+- **API Endpoint**: https://aicompliance.opssightai.com/api ✅ SECURE
+- **SSL Certificate**: Active (Google-managed)
+- **Auto-Scaling**: Enabled (2-10 pods)
+- **Monitoring**: CloudWatch + GKE metrics
 
 ### 🛠️ Management Commands
 
-#### Platform Management
+#### GKE Cluster Management
 ```bash
-./platform-manager.sh           # Interactive management interface
-./keep-alive.sh [command]        # Service control (start|stop|restart|status|monitor|logs)
-./health-check.sh               # Quick health check
-./setup-system-service.sh       # Configure auto-start
-```
+# Connect to GKE cluster
+gcloud container clusters get-credentials sermon-slicer-cluster --region us-central1
 
-#### Service Control
-```bash
-# Manual service management
-./keep-alive.sh start           # Start services
-./keep-alive.sh stop            # Stop services  
-./keep-alive.sh restart         # Restart services
-./keep-alive.sh monitor         # Continuous monitoring
-./keep-alive.sh logs            # View logs
+# View all resources
+kubectl get all,ingress,managedcertificate -n ai-compliance
 
-# System service management
-launchctl start com.ai-compliance-platform    # Start system service
-launchctl stop com.ai-compliance-platform     # Stop system service
-launchctl list | grep ai-compliance           # Check system service status
+# View logs
+kubectl logs -f deployment/ai-compliance-backend -n ai-compliance
+kubectl logs -f deployment/ai-compliance-frontend -n ai-compliance
+
+# Check SSL certificate status
+kubectl get managedcertificate -n ai-compliance
+kubectl describe managedcertificate ai-compliance-ssl-cert -n ai-compliance
 ```
 
 ### 🔧 Local Development Setup (If Needed)
 
-If you need to modify the code:
+If you need to modify the code and test locally:
 
 1. **Backend Development**
    ```bash
    cd backend
-   source venv/bin/activate  # Virtual environment already exists
-   # Edit files in backend/
-   # Services will auto-restart via monitoring
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   python main.py
    ```
 
 2. **Frontend Development**
    ```bash
    cd frontend
-   # Edit files in frontend/src/
-   # Hot reload is enabled - changes appear automatically
+   npm install
+   PORT=3001 npm start
+   ```
+
+3. **Deploy Changes to GKE**
+   ```bash
+   # Build and push Docker images
+   cd backend
+   docker build -t gcr.io/alpfr-splunk-integration/ai-compliance-backend:latest .
+   docker push gcr.io/alpfr-splunk-integration/ai-compliance-backend:latest
+   
+   cd ../frontend
+   docker build -t gcr.io/alpfr-splunk-integration/ai-compliance-frontend:latest .
+   docker push gcr.io/alpfr-splunk-integration/ai-compliance-frontend:latest
+   
+   # Update deployment
+   kubectl rollout restart deployment/ai-compliance-backend -n ai-compliance
+   kubectl rollout restart deployment/ai-compliance-frontend -n ai-compliance
    ```
 
 ### 📊 Monitoring and Logs
 
-#### Log Files
-- `keep-alive.log` - Service monitoring logs
-- `backend.log` - Backend application logs  
-- `frontend.log` - Frontend build logs
-- `system.log` - System service logs
+#### Log Files (GKE)
+View logs from Kubernetes pods:
 
-#### View Logs
 ```bash
-./keep-alive.sh logs            # View all recent logs
-tail -f keep-alive.log          # Follow monitoring logs
-tail -f backend.log             # Follow backend logs
+# Backend logs
+kubectl logs -f deployment/ai-compliance-backend -n ai-compliance
+
+# Frontend logs
+kubectl logs -f deployment/ai-compliance-frontend -n ai-compliance
+
+# All pods
+kubectl logs -f -l app=ai-compliance -n ai-compliance --all-containers=true
 ```
+
+#### Monitoring Dashboards
+- **GKE Console**: https://console.cloud.google.com/kubernetes/workload?project=alpfr-splunk-integration
+- **CloudWatch**: Metrics and alarms for cluster health
+- **Application Metrics**: Available at https://aicompliance.opssightai.com/api/metrics (if enabled)
 
 ### API Endpoints
 
@@ -653,13 +657,13 @@ The platform uses the following main tables:
 ### 🎯 Ready-to-Test Features
 
 **Your platform is live and ready for testing!**
-- Frontend: http://localhost:3001
-- Login: admin/admin123
+- Production URL: https://aicompliance.opssightai.com
+- Login: admin/admin123 or inspector/inspector123
 
 ### 🤖 LLM Assessment Testing (NEW!)
 
 #### Test Case 1: Financial Services PII Detection
-1. Go to http://localhost:3001 → Guardrails → "Test LLM & Content"
+1. Go to https://aicompliance.opssightai.com → Guardrails → "Test LLM & Content"
 2. Select Industry: "Financial Services"
 3. Select Model: "GPT-4 (OpenAI)" ⭐
 4. Test Content: `"Customer John Doe, SSN: 123-45-6789, needs investment advice"`
@@ -680,7 +684,7 @@ The platform uses the following main tables:
 ### 📊 Executive Dashboard Testing (NEW!)
 
 #### Test Executive Features
-1. Go to http://localhost:3001 → Login → Dashboard
+1. Go to https://aicompliance.opssightai.com → Login → Dashboard
 2. Click "Executive" toggle button (top-right)
 3. Explore features:
    - Strategic KPIs with trend indicators
