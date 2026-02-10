@@ -19,6 +19,7 @@ import Organizations from './components/Organizations';
 import AuditTrail from './components/AuditTrail';
 import Navigation from './components/Navigation';
 import LLMManagement from './components/LLMManagement';
+import About from './components/About';
 
 // Theme configuration
 const theme = createTheme({
@@ -97,6 +98,11 @@ function AppContent() {
           <Route path="/audit-trail" element={
             <ProtectedRoute>
               <AuditTrail />
+            </ProtectedRoute>
+          } />
+          <Route path="/about" element={
+            <ProtectedRoute>
+              <About />
             </ProtectedRoute>
           } />
         </Routes>

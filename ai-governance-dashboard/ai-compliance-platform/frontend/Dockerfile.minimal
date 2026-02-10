@@ -1,0 +1,42 @@
+# Minimal frontend with nginx serving static content
+FROM nginx:alpine
+
+# Create a simple index.html
+RUN mkdir -p /usr/share/nginx/html && \
+    echo '<!DOCTYPE html>' > /usr/share/nginx/html/index.html && \
+    echo '<html lang="en">' >> /usr/share/nginx/html/index.html && \
+    echo '<head>' >> /usr/share/nginx/html/index.html && \
+    echo '  <meta charset="UTF-8">' >> /usr/share/nginx/html/index.html && \
+    echo '  <meta name="viewport" content="width=device-width, initial-scale=1.0">' >> /usr/share/nginx/html/index.html && \
+    echo '  <title>AI Compliance Platform</title>' >> /usr/share/nginx/html/index.html && \
+    echo '  <style>body{font-family:Arial,sans-serif;max-width:800px;margin:50px auto;padding:20px;}h1{color:#333;}a{color:#0066cc;}</style>' >> /usr/share/nginx/html/index.html && \
+    echo '</head>' >> /usr/share/nginx/html/index.html && \
+    echo '<body>' >> /usr/share/nginx/html/index.html && \
+    echo '  <h1>AI Compliance Platform</h1>' >> /usr/share/nginx/html/index.html && \
+    echo '  <p>Welcome to the AI Compliance Platform API.</p>' >> /usr/share/nginx/html/index.html && \
+    echo '  <p>The API is running at <a href="/api">/api</a></p>' >> /usr/share/nginx/html/index.html && \
+    echo '  <p>Status: <span id="status">Checking...</span></p>' >> /usr/share/nginx/html/index.html && \
+    echo '  <script>' >> /usr/share/nginx/html/index.html && \
+    echo '    fetch("/api").then(r=>r.json()).then(d=>{document.getElementById("status").textContent="✓ API is running - "+d.message}).catch(()=>{document.getElementById("status").textContent="✗ API unavailable"});' >> /usr/share/nginx/html/index.html && \
+    echo '  </script>' >> /usr/share/nginx/html/index.html && \
+    echo '</body>' >> /usr/share/nginx/html/index.html && \
+    echo '</html>' >> /usr/share/nginx/html/index.html
+
+# Create nginx config
+RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
+    echo '  listen 3000;' >> /etc/nginx/conf.d/default.conf && \
+    echo '  location / {' >> /etc/nginx/conf.d/default.conf && \
+    echo '    root /usr/share/nginx/html;' >> /etc/nginx/conf.d/default.conf && \
+    echo '    index index.html;' >> /etc/nginx/conf.d/default.conf && \
+    echo '    try_files $uri $uri/ /index.html;' >> /etc/nginx/conf.d/default.conf && \
+    echo '  }' >> /etc/nginx/conf.d/default.conf && \
+    echo '  location /api {' >> /etc/nginx/conf.d/default.conf && \
+    echo '    proxy_pass http://ai-compliance-backend:8000;' >> /etc/nginx/conf.d/default.conf && \
+    echo '    proxy_set_header Host $host;' >> /etc/nginx/conf.d/default.conf && \
+    echo '    proxy_set_header X-Real-IP $remote_addr;' >> /etc/nginx/conf.d/default.conf && \
+    echo '  }' >> /etc/nginx/conf.d/default.conf && \
+    echo '}' >> /etc/nginx/conf.d/default.conf
+
+EXPOSE 3000
+
+CMD ["nginx", "-g", "daemon off;"]

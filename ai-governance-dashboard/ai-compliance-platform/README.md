@@ -1,6 +1,27 @@
 # AI Compliance Platform
 
-A comprehensive system for operationalizing AI compliance frameworks, serving dual purposes: enabling organizations to conduct thorough self-assessments of their AI compliance posture, and providing regulatory agencies with standardized tools for conducting AI compliance assessments.
+## 🎯 What Is This?
+
+A **production-ready platform** that helps organizations and regulatory agencies assess, monitor, and ensure AI systems comply with industry regulations and ethical standards.
+
+### The Problem
+Organizations struggle to ensure their AI systems comply with evolving regulations across different industries (Financial Services, Healthcare, Automotive, Government).
+
+### Our Solution
+A dual-purpose platform that:
+- **For Organizations**: Self-assess and monitor AI compliance with real-time guardrails
+- **For Regulators**: Conduct standardized assessments across multiple organizations
+- **For Everyone**: Test compliance across 7 major AI models (GPT-4, Claude, Gemini, etc.)
+
+### Key Features
+- 🤖 **LLM Assessment**: Test 7 AI models for compliance with industry-specific filtering
+- 🛡️ **Real-Time Guardrails**: Automated content filtering (PII, regulatory language, bias)
+- 📊 **Executive Dashboard**: Strategic KPIs and risk assessment for C-suite
+- 🛠️ **LLM Management**: Complete AI model lifecycle management (Admin only)
+- 📋 **Compliance Assessments**: Structured evaluation framework with scoring
+- 📝 **Audit Trail**: Regulatory-grade activity logging
+
+**📖 For a complete overview, see [MVP_OVERVIEW.md](MVP_OVERVIEW.md)**
 
 ## ✅ **PRODUCTION STATUS: FULLY OPERATIONAL**
 

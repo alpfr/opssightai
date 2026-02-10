@@ -7,8 +7,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies with legacy peer deps and explicitly install react-scripts
+RUN npm install --legacy-peer-deps && \
+    npm install react-scripts@5.0.1 --legacy-peer-deps
 
 # Copy application code
 COPY . .

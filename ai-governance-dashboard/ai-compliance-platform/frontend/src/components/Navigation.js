@@ -25,7 +25,8 @@ import {
   Business as BusinessIcon,
   History as HistoryIcon,
   Logout as LogoutIcon,
-  SmartToy as SmartToyIcon
+  SmartToy as SmartToyIcon,
+  Info as InfoIcon
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -51,7 +52,8 @@ export default function Navigation() {
     ...(user?.role === 'organization_admin' || user?.role === 'regulatory_inspector' ? [
       { text: 'LLM Management', icon: <SmartToyIcon />, path: '/llm-management' }
     ] : []),
-    { text: 'Audit Trail', icon: <HistoryIcon />, path: '/audit-trail' }
+    { text: 'Audit Trail', icon: <HistoryIcon />, path: '/audit-trail' },
+    { text: 'About', icon: <InfoIcon />, path: '/about' }
   ];
 
   const getRoleColor = (role) => {

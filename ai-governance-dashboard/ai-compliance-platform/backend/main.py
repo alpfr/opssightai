@@ -20,7 +20,7 @@ from contextlib import contextmanager
 SECRET_KEY = os.getenv("SECRET_KEY", "ai-compliance-platform-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-DATABASE_URL = "ai_compliance.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "ai_compliance.db")
 
 from contextlib import asynccontextmanager
 
@@ -196,7 +196,8 @@ app = FastAPI(
     title="AI Compliance Platform API",
     description="Sample backend API for AI compliance assessment and guardrail management",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    root_path="/api"
 )
 
 # CORS middleware for frontend integration

@@ -19,13 +19,15 @@ code {
 
 .main-content {
   margin-left: 240px;
-  padding: 20px;
+  margin-top: 64px;
+  padding: 16px;
   min-height: calc(100vh - 64px);
 }
 
 @media (max-width: 768px) {
   .main-content {
     margin-left: 0;
-    padding: 10px;
+    margin-top: 56px;
+    padding: 8px;
   }
 }

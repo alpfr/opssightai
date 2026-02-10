@@ -6,7 +6,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 // Configure axios base URL for API calls
-axios.defaults.baseURL = 'http://localhost:8000';
+// Use environment variable or default to /api for production
+const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
+axios.defaults.baseURL = API_BASE_URL;
 
 const AuthContext = createContext();
 

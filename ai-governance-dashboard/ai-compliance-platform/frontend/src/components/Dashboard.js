@@ -440,18 +440,18 @@ export default function Dashboard() {
   // Standard Dashboard View
   const renderStandardDashboard = () => (
     <Box className="main-content">
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h5" gutterBottom>
         {isRegulatory ? 'Regulatory Dashboard' : 'Compliance Dashboard'}
       </Typography>
       
-      <Typography variant="body1" color="text.secondary" gutterBottom>
+      <Typography variant="body2" color="text.secondary" gutterBottom sx={{ mb: 2 }}>
         {isRegulatory 
           ? 'Monitor compliance across all organizations under your jurisdiction'
           : 'Monitor your organization\'s AI compliance status and performance'
         }
       </Typography>
 
-      <Grid container spacing={3} sx={{ mt: 2 }}>
+      <Grid container spacing={2} sx={{ mt: 1 }}>
         {isRegulatory ? (
           // Regulatory Inspector Dashboard
           <>
@@ -612,34 +612,36 @@ export default function Dashboard() {
   const renderExecutiveDashboard = () => (
     <Box className="main-content">
       {/* Header Section */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h3" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+      <Box sx={{ mb: 2 }}>
+        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
           {isRegulatory ? 'Regulatory Command Center' : 'Executive Dashboard'}
         </Typography>
         
-        <Typography variant="h6" color="text.secondary" gutterBottom>
+        <Typography variant="body2" color="text.secondary" gutterBottom>
           {isRegulatory 
             ? 'Comprehensive oversight of AI compliance across all regulated organizations'
             : 'Strategic overview of your organization\'s AI compliance and performance metrics'
           }
         </Typography>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
           <Chip 
             icon={<TimelineIcon />}
             label={`Last Updated: ${new Date().toLocaleString()}`}
             variant="outlined"
-            sx={{ mr: 2 }}
+            size="small"
+            sx={{ mr: 1 }}
           />
           <Chip 
             icon={<VisibilityIcon />}
             label={isRegulatory ? 'Multi-Org View' : 'Organization View'}
             color="primary"
+            size="small"
           />
         </Box>
       </Box>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         {isRegulatory ? (
           // Enhanced Regulatory Inspector Dashboard
           <>
@@ -936,8 +938,8 @@ export default function Dashboard() {
   return (
     <Box className="main-content">
       {/* View Toggle */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h5">
           Dashboard
         </Typography>
         <ToggleButtonGroup
@@ -949,13 +951,14 @@ export default function Dashboard() {
             }
           }}
           aria-label="dashboard view mode"
+          size="small"
         >
           <ToggleButton value="standard" aria-label="standard dashboard">
-            <DashboardIcon sx={{ mr: 1 }} />
+            <DashboardIcon sx={{ mr: 0.5, fontSize: 20 }} />
             Standard
           </ToggleButton>
           <ToggleButton value="executive" aria-label="executive dashboard">
-            <ExecutiveIcon sx={{ mr: 1 }} />
+            <ExecutiveIcon sx={{ mr: 0.5, fontSize: 20 }} />
             Executive
           </ToggleButton>
         </ToggleButtonGroup>

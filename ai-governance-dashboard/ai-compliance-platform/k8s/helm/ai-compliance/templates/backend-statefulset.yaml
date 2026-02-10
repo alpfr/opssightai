@@ -22,6 +22,10 @@ spec:
         app.kubernetes.io/component: backend
     spec:
       serviceAccountName: {{ include "ai-compliance.serviceAccountName" . }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
       containers:
       - name: backend
         image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
