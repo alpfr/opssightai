@@ -8,6 +8,11 @@ metadata:
     networking.gke.io/managed-certificates: "vantedge-health-cert"
     kubernetes.io/ingress.allow-http: "true"
 spec:
+  tls:
+  - hosts:
+    - vantedgehealth.com
+    - www.vantedgehealth.com
+    secretName: vantedge-health-tls
   defaultBackend:
     service:
       name: vantedge-health
