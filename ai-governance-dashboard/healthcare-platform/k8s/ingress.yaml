@@ -5,25 +5,15 @@ metadata:
   namespace: vantedge-health
   annotations:
     kubernetes.io/ingress.class: "gce"
-    kubernetes.io/ingress.global-static-ip-name: "vantedge-health-ip"
     networking.gke.io/managed-certificates: "vantedge-health-cert"
-    kubernetes.io/ingress.allow-http: "false"
-    # Security headers
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_set_headers "X-Frame-Options: DENY";
-      more_set_headers "X-Content-Type-Options: nosniff";
-      more_set_headers "X-XSS-Protection: 1; mode=block";
-      more_set_headers "Strict-Transport-Security: max-age=63072000; includeSubDomains; preload";
-    # Rate limiting
-    nginx.ingress.kubernetes.io/limit-rps: "10"
-    nginx.ingress.kubernetes.io/limit-connections: "20"
+    kubernetes.io/ingress.allow-http: "true"
 spec:
   rules:
   - host: vantedgehealth.com
     http:
       paths:
-      - path: /*
-        pathType: ImplementationSpecific
+      - path: /
+        pathType: Prefix
         backend:
           service:
             name: vantedge-health
@@ -32,8 +22,8 @@ spec:
   - host: www.vantedgehealth.com
     http:
       paths:
-      - path: /*
-        pathType: ImplementationSpecific
+      - path: /
+        pathType: Prefix
         backend:
           service:
             name: vantedge-health
