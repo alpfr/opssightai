@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+/* Healthcare Brand Palette */
+:root {
+  /* Primary Colors */
+  --deep-slate: #2C3E50;
+  --healing-teal: #1ABC9C;
+  --soft-sage: #95A5A6;
+  
+  /* Semantic Colors */
+  --background: #ffffff;
+  --foreground: #2C3E50;
+  --primary: #1ABC9C;
+  --secondary: #2C3E50;
+  --accent: #95A5A6;
+  
+  /* Status Colors */
+  --success: #27AE60;
+  --warning: #F39C12;
+  --error: #E74C3C;
+  --info: #3498DB;
+}
+
+@theme inline {
+  /* Background & Foreground */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  /* Brand Colors */
+  --color-deep-slate: var(--deep-slate);
+  --color-healing-teal: var(--healing-teal);
+  --color-soft-sage: var(--soft-sage);
+  
+  /* Semantic Colors */
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  
+  /* Status Colors */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
+  
+  /* Urgency Colors for Physician Dashboard */
+  --color-urgency-high: #EF4444;
+  --color-urgency-medium: #F59E0B;
+  --color-urgency-low: #1ABC9C;
+  
+  /* Pain Scale Colors */
+  --color-pain-low: #10B981;
+  --color-pain-medium: #F59E0B;
+  --color-pain-high: #EF4444;
+  
+  /* Touch Target Sizing (48px minimum for mobile accessibility) */
+  --spacing-touch: 48px;
+  --min-height-touch: 48px;
+  --min-width-touch: 48px;
+  
+  /* Fonts */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1a1a1a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+/* Animations */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+/* Physician Dashboard Utility Classes */
+
+/* Touch target sizing for mobile accessibility */
+.touch-target {
+  min-height: var(--min-height-touch);
+  min-width: var(--min-width-touch);
+}
+
+/* Active state scale down */
+.active\:scale-98:active {
+  transform: scale(0.98);
+}
+
+/* Mobile-first dashboard card */
+.dashboard-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+@media (min-width: 768px) {
+  .dashboard-card {
+    gap: 1.5rem;
+    padding: 1.5rem;
+    max-width: 42rem;
+  }
+}
+
+/* Urgency badge variants */
+.badge-high {
+  background-color: var(--color-urgency-high);
+  color: white;
+}
+
+.badge-medium {
+  background-color: var(--color-urgency-medium);
+  color: white;
+}
+
+.badge-low {
+  background-color: var(--color-urgency-low);
+  color: white;
+}
+
+/* Pain scale color variants */
+.pain-low {
+  color: var(--color-pain-low);
+}
+
+.pain-medium {
+  color: var(--color-pain-medium);
+}
+
+.pain-high {
+  color: var(--color-pain-high);
+}
