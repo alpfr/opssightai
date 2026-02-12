@@ -95,8 +95,9 @@ const sendConfirmationEmail = async (data: any) => {
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting
-    const identifier = request.ip || 'anonymous';
+    // Rate limiting - use forwarded IP or fallback to anonymous
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const identifier = forwardedFor?.split(',')[0] || 'anonymous';
     const { success, remaining } = await rateLimit(identifier);
 
     if (!success) {
@@ -139,7 +140,7 @@ export async function POST(request: NextRequest) {
     console.log('Contact form submission:', {
       ...data,
       timestamp: new Date().toISOString(),
-      ip: request.ip,
+      ip: identifier,
     });
 
     // Return success response

@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: vantedge-health
-        image: gcr.io/YOUR_PROJECT_ID/vantedge-health:latest
+        image: gcr.io/alpfr-splunk-integration/vantedge-health:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 3000

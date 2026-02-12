@@ -251,6 +251,7 @@ export default function ContactPage() {
                     By submitting this form, you agree to our privacy policy. We'll never share your information.
                   </p>
                 </form>
+                </>
               )}
             </div>
 
