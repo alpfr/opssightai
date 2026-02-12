@@ -1,0 +1,9 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: vantedge-health-cert
+  namespace: vantedge-health
+spec:
+  domains:
+    - vantedgehealth.com
+    - www.vantedgehealth.com

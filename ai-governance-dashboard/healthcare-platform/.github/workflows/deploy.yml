@@ -1,0 +1,145 @@
+name: Deploy to GKE
+
+on:
+  push:
+    branches:
+      - main
+      - production
+  workflow_dispatch:
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_REGION: us-central1
+  GKE_CLUSTER: vantedge-health-cluster
+  IMAGE_NAME: vantedge-health
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build application
+        run: npm run build
+
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for GCR
+        run: gcloud auth configure-docker
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t gcr.io/${{ env.GCP_PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            -t gcr.io/${{ env.GCP_PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest \
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push gcr.io/${{ env.GCP_PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push gcr.io/${{ env.GCP_PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    name: Deploy to GKE
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          gcloud components install gke-gcloud-auth-plugin
+
+      - name: Get GKE credentials
+        run: |
+          gcloud container clusters get-credentials ${{ env.GKE_CLUSTER }} \
+            --region ${{ env.GCP_REGION }} \
+            --project ${{ env.GCP_PROJECT_ID }}
+
+      - name: Deploy to GKE
+        run: |
+          # Update deployment with new image
+          kubectl set image deployment/vantedge-health \
+            vantedge-health=gcr.io/${{ env.GCP_PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            -n vantedge-health
+
+          # Wait for rollout to complete
+          kubectl rollout status deployment/vantedge-health -n vantedge-health
+
+      - name: Verify deployment
+        run: |
+          kubectl get pods -n vantedge-health
+          kubectl get services -n vantedge-health
+          kubectl get ingress -n vantedge-health
+
+      - name: Run smoke tests
+        run: |
+          # Get ingress IP
+          INGRESS_IP=$(kubectl get ingress vantedge-health-ingress -n vantedge-health -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          
+          # Wait for service to be ready
+          sleep 30
+          
+          # Test health endpoint
+          kubectl exec -n vantedge-health deployment/vantedge-health -- curl -f http://localhost:3000/api/health || exit 1
+
+  notify:
+    name: Notify Deployment Status
+    runs-on: ubuntu-latest
+    needs: [test, build-and-push, deploy]
+    if: always()
+    steps:
+      - name: Deployment Success
+        if: ${{ needs.deploy.result == 'success' }}
+        run: |
+          echo "✅ Deployment successful!"
+          echo "Version: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref }}"
+
+      - name: Deployment Failed
+        if: ${{ needs.deploy.result == 'failure' }}
+        run: |
+          echo "❌ Deployment failed!"
+          exit 1

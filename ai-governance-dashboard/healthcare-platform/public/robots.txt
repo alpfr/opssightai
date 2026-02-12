@@ -1,0 +1,21 @@
+# Vantedge Health - Robots.txt
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+
+# Marketing pages
+Allow: /home
+Allow: /features
+Allow: /pricing
+Allow: /contact
+Allow: /about
+Allow: /practices
+
+# Disallow admin and API routes
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+
+# Sitemap
+Sitemap: https://vantedgehealth.com/sitemap.xml

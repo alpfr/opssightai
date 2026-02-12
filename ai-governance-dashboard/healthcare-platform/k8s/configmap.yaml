@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vantedge-health-config
+  namespace: vantedge-health
+data:
+  NEXT_PUBLIC_ENVIRONMENT: "production"
+  NEXT_PUBLIC_CONTACT_EMAIL: "hello@vantedgehealth.com"
+  NEXT_PUBLIC_PHONE: "+18885551234"
+  NEXT_PUBLIC_OFFICE_ADDRESS: "123 Healthcare Drive, Chicago, IL 60601"
+  NODE_ENV: "production"
+  PORT: "3000"

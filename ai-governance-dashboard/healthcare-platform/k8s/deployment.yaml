@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vantedge-health
+  namespace: vantedge-health
+  labels:
+    app: vantedge-health
+    version: v1.3.0
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: vantedge-health
+  template:
+    metadata:
+      labels:
+        app: vantedge-health
+        version: v1.3.0
+    spec:
+      containers:
+      - name: vantedge-health
+        image: gcr.io/YOUR_PROJECT_ID/vantedge-health:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: vantedge-health-config
+              key: NODE_ENV
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: vantedge-health-config
+              key: PORT
+        - name: NEXT_PUBLIC_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: vantedge-health-config
+              key: NEXT_PUBLIC_ENVIRONMENT
+        - name: NEXT_PUBLIC_APP_URL
+          value: "https://vantedgehealth.com"
+        - name: NEXT_PUBLIC_CONTACT_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              name: vantedge-health-config
+              key: NEXT_PUBLIC_CONTACT_EMAIL
+        - name: NEXT_PUBLIC_PHONE
+          valueFrom:
+            configMapKeyRef:
+              name: vantedge-health-config
+              key: NEXT_PUBLIC_PHONE
+        - name: NEXT_PUBLIC_OFFICE_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: vantedge-health-config
+              key: NEXT_PUBLIC_OFFICE_ADDRESS
+        - name: SENDGRID_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: vantedge-health-secrets
+              key: SENDGRID_API_KEY
+        - name: SENDGRID_FROM_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: vantedge-health-secrets
+              key: SENDGRID_FROM_EMAIL
+        - name: API_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: vantedge-health-secrets
+              key: API_SECRET_KEY
+        - name: SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: vantedge-health-secrets
+              key: SESSION_SECRET
+        - name: CSRF_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: vantedge-health-secrets
+              key: CSRF_SECRET
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1001
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
+      securityContext:
+        fsGroup: 1001

@@ -318,16 +318,51 @@ npm run type-check
 
 ## 📦 Deployment
 
-### Vercel (Recommended)
+### Production Deployment to GKE (Recommended)
+
+The platform is production-ready with complete GKE deployment configuration.
+
+**Quick Start:**
+```bash
+# Test locally first
+npm run docker:test
+
+# Create GKE cluster (first time only)
+npm run gke:create-cluster
+
+# Deploy to production
+npm run deploy:gke
+```
+
+**Complete Documentation:**
+- 📘 [Deployment Guide](DEPLOYMENT.md) - Step-by-step deployment instructions
+- ✅ [Pre-Deployment Checklist](PRE_DEPLOYMENT_CHECKLIST.md) - Complete before deploying
+- 🎉 [Production Ready Summary](PRODUCTION_READY.md) - Overview of all features
+
+**What's Included:**
+- Kubernetes manifests (namespace, deployment, service, ingress, HPA)
+- Docker configuration with multi-stage build
+- Automated deployment scripts
+- GitHub Actions CI/CD pipeline
+- SSL/TLS with Google-managed certificates
+- Auto-scaling (3-10 replicas)
+- Health checks and monitoring
+- Security best practices
+
+### Local Docker Testing
+```bash
+# Build and test Docker image locally
+npm run docker:build
+npm run docker:test
+
+# Or manually
+docker-compose up
+```
+
+### Alternative: Vercel
 ```bash
 npm run build
 vercel deploy
-```
-
-### Docker
-```bash
-docker build -t healthcare-platform .
-docker run -p 3000:3000 healthcare-platform
 ```
 
 ## 🤝 Contributing
@@ -348,9 +383,44 @@ For issues or questions:
 - Create an issue in the repository
 - Contact: support@healthcare-platform.com
 
+## 🚀 Production Deployment
+
+### Infrastructure
+- **Platform**: Google Kubernetes Engine (GKE)
+- **Replicas**: 3-10 (auto-scaling)
+- **SSL/TLS**: Google-managed certificates
+- **Monitoring**: GKE monitoring + health checks
+- **CI/CD**: GitHub Actions pipeline
+
+### Deployment Scripts
+```bash
+npm run docker:test          # Test Docker build locally
+npm run gke:create-cluster   # Create GKE cluster
+npm run deploy:gke           # Deploy to GKE
+```
+
+### Key Features
+- ✅ Production-ready Dockerfile
+- ✅ Kubernetes manifests (deployment, service, ingress, HPA)
+- ✅ Automated deployment scripts
+- ✅ SSL/TLS certificates
+- ✅ Auto-scaling configuration
+- ✅ Health checks (liveness & readiness)
+- ✅ Security best practices
+- ✅ CI/CD pipeline
+
+**See [DEPLOYMENT.md](DEPLOYMENT.md) for complete deployment guide.**
+
 ## 🔄 Changelog
 
 ### v1.3.0 (Current)
+- ✅ **NEW**: Production-ready GKE deployment configuration
+  - Complete Kubernetes manifests
+  - Automated deployment scripts
+  - GitHub Actions CI/CD pipeline
+  - SSL/TLS with managed certificates
+  - Auto-scaling (3-10 replicas)
+  - Comprehensive deployment documentation
 - ✅ **NEW**: Complete marketing website with 6 pages
   - Home/Landing page with hero, 3 pillars, features, stats
   - For Practices page with ROI, benefits, testimonial

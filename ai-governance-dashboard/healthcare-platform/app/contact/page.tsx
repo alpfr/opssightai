@@ -16,25 +16,49 @@ export default function ContactPage() {
 
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
-    setSubmitted(true);
-    
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        practiceName: '',
-        practiceSize: '',
-        message: '',
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-    }, 3000);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit form');
+      }
+
+      setSubmitted(true);
+      
+      // Reset form after 5 seconds
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          practiceName: '',
+          practiceSize: '',
+          message: '',
+        });
+      }, 5000);
+    } catch (err: any) {
+      setError(err.message || 'An error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -82,7 +106,13 @@ export default function ContactPage() {
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <>
+                  {error && (
+                    <div className="bg-error/10 border-2 border-error rounded-xl p-4 mb-6">
+                      <p className="text-error text-center">{error}</p>
+                    </div>
+                  )}
+                  <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="firstName" className="block text-sm font-medium text-deep-slate mb-2">
@@ -201,10 +231,20 @@ export default function ContactPage() {
 
                   <button
                     type="submit"
-                    className="w-full bg-healing-teal hover:bg-healing-teal/90 text-white px-8 py-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-lg"
+                    disabled={isSubmitting}
+                    className="w-full bg-healing-teal hover:bg-healing-teal/90 text-white px-8 py-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Send className="w-5 h-5" />
-                    Schedule Demo
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Schedule Demo
+                      </>
+                    )}
                   </button>
 
                   <p className="text-sm text-soft-sage text-center">
