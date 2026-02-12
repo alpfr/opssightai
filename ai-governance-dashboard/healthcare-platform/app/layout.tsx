@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Healthcare Platform - HIPAA Compliant",
-  description: "Secure healthcare management platform with HIPAA compliance",
+  title: "Vantedge Health - AI-Driven Healthcare Platform",
+  description: "Returning humanity to healthcare. Vantedge Health uses Agentic AI to solve the Small Practice Squeeze, helping doctors focus on patients, not paperwork.",
 };
 
 export default function RootLayout({

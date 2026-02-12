@@ -1,4 +1,15 @@
-# Healthcare Platform - Quick Reference
+# Vantedge Health - Quick Reference
+
+## 🏥 About Vantedge Health
+
+**Mission**: Returning humanity to healthcare by solving the Small Practice Squeeze
+
+**3 Pillars**:
+1. Clinical-First AI - Protect physician time
+2. Closed-Loop Care - No patient falls through cracks
+3. RADICAL Transparency - HIPAA-native, provider-approved
+
+**Visit**: `/about` for complete story
 
 ## 🚀 Commands
 
@@ -48,12 +59,14 @@ useInactivityTimeout(15, () => {
 
 | File | Purpose |
 |------|---------|
-| `app/layout.tsx` | Root layout |
+| `app/layout.tsx` | Root layout with Vantedge branding |
 | `app/page.tsx` | Dashboard |
+| `app/about/page.tsx` | About Us page (origin story) |
 | `app/globals.css` | Theme config |
-| `components/Navigation.tsx` | Nav bar |
+| `components/Navigation.tsx` | Nav bar with Vantedge logo |
 | `components/SessionWarning.tsx` | Timeout warning |
 | `hooks/useInactivityTimeout.ts` | Timeout hook |
+| `data/sampleData.ts` | Sample healthcare data |
 
 ## 🧩 Components
 
@@ -218,3 +231,5 @@ npm run build
 ---
 
 **Quick Start**: `cd healthcare-platform && npm install && npm run dev`
+
+**Vantedge Health** • Founded 2026 • HIPAA Compliant • Returning Humanity to Healthcare

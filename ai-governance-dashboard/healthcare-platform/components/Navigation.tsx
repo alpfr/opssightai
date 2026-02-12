@@ -13,15 +13,20 @@ import {
   Settings,
   LogOut,
   Activity,
+  Info,
+  Mail,
+  Zap,
+  DollarSign,
 } from 'lucide-react';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Patients', href: '/patients', icon: Users },
-  { name: 'Appointments', href: '/appointments', icon: Calendar },
-  { name: 'Records', href: '/records', icon: FileText },
-  { name: 'Analytics', href: '/analytics', icon: Activity },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Home', href: '/home', icon: Home },
+  { name: 'Dashboard', href: '/', icon: Activity },
+  { name: 'For Practices', href: '/practices', icon: Users },
+  { name: 'Features', href: '/features', icon: Zap },
+  { name: 'Pricing', href: '/pricing', icon: DollarSign },
+  { name: 'About', href: '/about', icon: Info },
+  { name: 'Contact', href: '/contact', icon: Mail },
 ];
 
 export function Navigation() {
@@ -45,7 +50,7 @@ export function Navigation() {
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                 <Activity className="w-8 h-8 text-healing-teal" />
-                <span className="text-xl font-bold">HealthCare</span>
+                <span className="text-xl font-bold">Vantedge Health</span>
               </Link>
             </div>
 

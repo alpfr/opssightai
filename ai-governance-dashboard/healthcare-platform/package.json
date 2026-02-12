@@ -1,6 +1,7 @@
 {
-  "name": "healthcare-platform",
-  "version": "0.1.0",
+  "name": "vantedge-health",
+  "version": "1.2.0",
+  "description": "Vantedge Health - AI-driven healthcare platform returning humanity to healthcare",
   "private": true,
   "scripts": {
     "dev": "next dev",

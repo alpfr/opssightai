@@ -1,6 +1,17 @@
-# Healthcare Platform - HIPAA Compliant
+# Vantedge Health - AI-Driven Healthcare Platform
 
-A modern, HIPAA-compliant healthcare management platform built with Next.js 15, TypeScript, and Tailwind CSS.
+**Returning Humanity to Healthcare**
+
+A modern, HIPAA-compliant healthcare platform built to solve the Small Practice Squeeze. Vantedge Health uses Agentic AI to handle logistics so doctors can focus on patients, not paperwork.
+
+## 🏥 Our Mission
+
+Independent clinics are trapped between rising administrative costs and physician burnout. Vantedge Health exists to:
+- Protect physician time with Clinical-First AI
+- Ensure no patient falls through the cracks with Closed-Loop Care
+- Maintain RADICAL Transparency with ethics-led, HIPAA-native AI
+
+**Learn More**: Visit `/about` for our complete story including the "Marcus scenario" and our 3 Pillars.
 
 ## 🎨 Brand Palette
 
@@ -49,15 +60,27 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 ## 📁 Project Structure
 
 ```
-healthcare-platform/
+vantedge-health/
 ├── app/
-│   ├── layout.tsx                    # Root layout with navigation
+│   ├── layout.tsx                    # Root layout with Vantedge branding
 │   ├── page.tsx                      # Dashboard page
+│   ├── home/
+│   │   └── page.tsx                  # Landing page with hero and features
+│   ├── practices/
+│   │   └── page.tsx                  # For Practices page with ROI
+│   ├── features/
+│   │   └── page.tsx                  # Features showcase with mockups
+│   ├── pricing/
+│   │   └── page.tsx                  # Pricing tiers and ROI calculator
+│   ├── contact/
+│   │   └── page.tsx                  # Contact form and info
+│   ├── about/
+│   │   └── page.tsx                  # About Us page (origin story, 3 pillars)
 │   ├── globals.css                   # Global styles with theme
 │   └── examples/
 │       └── physician-dashboard/      # Example page for dashboard
 ├── components/
-│   ├── Navigation.tsx                # Responsive navigation bar
+│   ├── Navigation.tsx                # Responsive navigation with Vantedge logo
 │   ├── SessionWarning.tsx            # Inactivity warning component
 │   ├── LayoutWrapper.tsx             # Layout with timeout hook
 │   └── physician-mobile-dashboard/   # Physician dashboard components
@@ -68,6 +91,9 @@ healthcare-platform/
 │       ├── ActionButtonGroup.tsx
 │       ├── types.ts
 │       └── index.ts
+├── data/
+│   ├── sampleData.ts                 # Comprehensive sample healthcare data
+│   └── README.md                     # Data documentation
 ├── hooks/
 │   └── useInactivityTimeout.ts       # HIPAA timeout hook
 ├── tests/
@@ -77,6 +103,41 @@ healthcare-platform/
 ```
 
 ## 🎯 Key Features
+
+### Complete Marketing Website (6 Pages)
+A full-featured marketing site showcasing Vantedge Health:
+
+**Home/Landing Page** (`/home`) - Hero with custom SVG logo, 3 Pillars, features, stats, CTAs
+
+**For Practices** (`/practices`) - Provider value prop, ROI benefits, testimonial, implementation process
+
+**Features** (`/features`) - Detailed showcases with UI mockups, 13 features total, EHR integrations
+
+**Pricing** (`/pricing`) - 3 tiers (Starter $499, Professional $899, Enterprise custom), ROI calculator, FAQ
+
+**Contact** (`/contact`) - Lead gen form with validation, contact info, success handling
+
+**About** (`/about`) - Origin story (Marcus scenario), 3 Pillars, 2026 Edge, provider CTA
+
+### Sample Data
+Comprehensive healthcare data for all dashboard tabs (see `data/README.md`):
+- 5 patients with complete medical profiles
+- 7 appointments (all types and statuses)
+- 9 medical records (labs, imaging, prescriptions)
+- 16 KPIs across 4 analytics categories
+- 3 chart datasets for visualizations
+- User settings and preferences
+
+### About Page - Vantedge Health
+A professionally crafted About page that tells the Vantedge Health story:
+- **Origin Story**: The "Marcus scenario" - how fragmented care affects real patients
+- **The 3 Pillars**: Clinical-First AI, Closed-Loop Care, RADICAL Transparency
+- **The 2026 Edge**: Role-based triage, smart logistics, predictive capacity planning
+- **Provider CTA**: Warm invitation for clinic owners to join the network
+- **Brand Voice**: Grounded, empathetic, clinical efficiency language
+- **Under 600 words**: Glanceable for busy medical professionals
+
+**Route**: Visit `/about` to see the complete story
 
 ### Physician's Mobile Dashboard
 A complete mobile-optimized dashboard for physicians with:
@@ -289,7 +350,27 @@ For issues or questions:
 
 ## 🔄 Changelog
 
-### v1.1.0 (Current)
+### v1.3.0 (Current)
+- ✅ **NEW**: Complete marketing website with 6 pages
+  - Home/Landing page with hero, 3 pillars, features, stats
+  - For Practices page with ROI, benefits, testimonial
+  - Features page with detailed showcases and UI mockups
+  - Pricing page with 3 tiers, ROI calculator, FAQ
+  - Contact page with lead gen form and contact info
+  - About page with origin story and mission
+- ✅ Custom SVG logo with hexagon and pulse/heartbeat
+- ✅ Updated navigation with all marketing pages
+- ✅ Comprehensive sample data for all dashboard tabs
+- ✅ Full responsive design (mobile, tablet, desktop)
+- ✅ Working contact form with validation
+- ✅ SEO metadata on all pages
+
+### v1.2.0
+- ✅ About Us page for Vantedge Health
+- ✅ Brand integration throughout application
+- ✅ Updated metadata and package.json
+
+### v1.1.0
 - ✅ **NEW**: Physician's Mobile Dashboard component
   - Triage priority badge with color-coded urgency
   - Clinical brief card with pain scale visualization
@@ -314,4 +395,6 @@ For issues or questions:
 
 **Built with ❤️ for Healthcare Professionals**
 
-*HIPAA Compliant | Secure | Modern*
+**Vantedge Health** • Founded 2026 • HIPAA Compliant • Returning Humanity to Healthcare
+
+*Solving the Small Practice Squeeze*
