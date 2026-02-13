@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jhb-streampulse-config
+  namespace: jhb-streampulse
+data:
+  NODE_ENV: "production"
+  PORT: "8000"

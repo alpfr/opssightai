@@ -1,0 +1,9 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: jhb-streampulse-cert
+  namespace: jhb-streampulse
+spec:
+  domains:
+    - streampulse.jesushouse.com
+    - www.streampulse.jesushouse.com

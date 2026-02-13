@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: jhb-streampulse-pdb
+  namespace: jhb-streampulse
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: jhb-streampulse

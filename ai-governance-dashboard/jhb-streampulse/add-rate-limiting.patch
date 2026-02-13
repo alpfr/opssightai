@@ -1,0 +1,33 @@
+// Add to package.json dependencies:
+{
+  "express-rate-limit": "^7.1.5"
+}
+
+// Add to server.js after imports:
+import rateLimit from "express-rate-limit";
+
+// General API rate limiter
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later."
+});
+
+// Strict limiter for auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5, // Only 5 auth attempts per 15 minutes
+  message: "Too many authentication attempts, please try again later."
+});
+
+// Upload limiter
+const uploadLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // 10 uploads per hour
+  message: "Upload limit reached, please try again later."
+});
+
+// Apply rate limiters
+app.use("/api/", apiLimiter);
+app.use("/api/auth", authLimiter);
+app.use("/api/upload", uploadLimiter);

@@ -34,6 +34,21 @@ Industrial operations monitoring and predictive maintenance platform.
 
 **📖 Full Documentation**: [opssightai/README.md](./opssightai/README.md)
 
+### JHB StreamPulse ✅ LIVE
+**Production URL**: http://34.107.248.179  
+**Domains**: streampulse.jesushouse.com (pending DNS)  
+**Status**: Deployed on GKE with auto-scaling  
+
+Streaming analytics dashboard for Jesus House Baltimore with SQLite backend:
+- 📊 **Multi-Service Analytics**: Track 4 services across 10+ platforms
+- 📤 **CSV Upload/Export**: Import historical data and export reports
+- 🔐 **Admin Authentication**: Secure PIN-based access control
+- 📈 **Real-Time Charts**: Interactive visualizations with Recharts
+- 💾 **Persistent Storage**: 5Gi volume for SQLite database
+- ⚡ **Auto-Scaling**: 2-5 pods based on traffic
+
+**📖 Full Documentation**: [jhb-streampulse/README.md](./jhb-streampulse/README.md)
+
 ---
 
 ## AI Governance Dashboard (Local Development)
@@ -57,6 +72,12 @@ cloudformation/
 │   ├── backend/               # Node.js/TypeScript backend
 │   ├── frontend/              # React/TypeScript frontend
 │   └── README.md              # Platform documentation
+├── jhb-streampulse/           # ✅ PRODUCTION - JHB StreamPulse (GKE)
+│   ├── server.js              # Node.js/Express backend
+│   ├── src/                   # React frontend with Vite
+│   ├── k8s/                   # Kubernetes manifests
+│   └── README.md              # Platform documentation
+├── healthcare-platform/       # Vantedge Health platform
 ├── kiro-scripts-review/       # Sermon transcription and content generation
 ├── mp3-transcription/         # MP3 transcription service
 ├── src/                       # AI Governance Dashboard (local dev)
@@ -68,6 +89,8 @@ cloudformation/
 ### Quick Navigation
 - **AI Compliance Platform**: [ai-compliance-platform/](./ai-compliance-platform/) - Production platform on GKE
 - **OpsSightAI**: [opssightai/](./opssightai/) - Industrial operations platform
+- **JHB StreamPulse**: [jhb-streampulse/](./jhb-streampulse/) - Streaming analytics dashboard
+- **Vantedge Health**: [healthcare-platform/](./healthcare-platform/) - Healthcare platform
 - **AI Governance Dashboard**: [src/](./src/) - Local development dashboard
 - **Deployment Scripts**: [scripts/](./scripts/) - Automated deployment tools
 

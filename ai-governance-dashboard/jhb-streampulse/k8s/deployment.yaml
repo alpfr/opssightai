@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jhb-streampulse
+  namespace: jhb-streampulse
+  labels:
+    app: jhb-streampulse
+    version: v2.0.0
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: jhb-streampulse
+  template:
+    metadata:
+      labels:
+        app: jhb-streampulse
+        version: v2.0.0
+    spec:
+      containers:
+      - name: jhb-streampulse
+        image: gcr.io/alpfr-splunk-integration/jhb-streampulse:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: jhb-streampulse-config
+              key: NODE_ENV
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: jhb-streampulse-config
+              key: PORT
+        - name: ADMIN_PIN
+          valueFrom:
+            secretKeyRef:
+              name: jhb-streampulse-secrets
+              key: ADMIN_PIN
+        volumeMounts:
+        - name: data
+          mountPath: /app/data
+        resources:
+          requests:
+            memory: "64Mi"   # Reduced from 256Mi (current usage: ~25Mi)
+            cpu: "50m"       # Reduced from 250m (current usage: 3m)
+          limits:
+            memory: "256Mi"  # Reduced from 512Mi
+            cpu: "200m"      # Reduced from 500m
+        livenessProbe:
+          httpGet:
+            path: /api/stats
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/stats
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: jhb-streampulse-data
+      securityContext:
+        fsGroup: 1000

@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: jhb-streampulse-backup
+  namespace: jhb-streampulse
+spec:
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: google/cloud-sdk:alpine
+            command:
+            - /bin/sh
+            - -c
+            - |
+              DATE=$(date +%Y%m%d-%H%M%S)
+              BACKUP_FILE="streampulse-backup-${DATE}.db"
+              
+              # Copy database to backup location
+              cp /app/data/streampulse.db /tmp/${BACKUP_FILE}
+              
+              # Upload to GCS bucket (create bucket first)
+              gsutil cp /tmp/${BACKUP_FILE} gs://jhb-streampulse-backups/
+              
+              # Keep only last 30 days of backups
+              gsutil ls gs://jhb-streampulse-backups/ | head -n -30 | xargs -r gsutil rm
+              
+              echo "Backup completed: ${BACKUP_FILE}"
+            volumeMounts:
+            - name: data
+              mountPath: /app/data
+              readOnly: true
+          volumes:
+          - name: data
+            persistentVolumeClaim:
+              claimName: jhb-streampulse-data
+          restartPolicy: OnFailure

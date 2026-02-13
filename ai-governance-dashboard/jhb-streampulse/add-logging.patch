@@ -1,0 +1,41 @@
+// Add to package.json dependencies:
+{
+  "morgan": "^1.10.0",
+  "winston": "^3.11.0"
+}
+
+// Add to server.js after imports:
+import morgan from "morgan";
+import winston from "winston";
+
+// Configure Winston logger
+const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.simple()
+    })
+  ]
+});
+
+// Add Morgan HTTP logging (after app initialization)
+app.use(morgan('combined', {
+  stream: {
+    write: (message) => logger.info(message.trim())
+  }
+}));
+
+// Global error handler (add before app.listen)
+app.use((err, req, res, next) => {
+  logger.error('Unhandled error:', {
+    error: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method
+  });
+  res.status(500).json({ error: 'Internal server error' });
+});

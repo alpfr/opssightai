@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jhb-streampulse-metrics
+  namespace: jhb-streampulse
+  labels:
+    app: jhb-streampulse
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9090
+    targetPort: 9090
+    protocol: TCP
+    name: metrics
+  selector:
+    app: jhb-streampulse
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: jhb-streampulse
+  namespace: jhb-streampulse
+  labels:
+    app: jhb-streampulse
+spec:
+  selector:
+    matchLabels:
+      app: jhb-streampulse
+  endpoints:
+  - port: metrics
+    interval: 30s
+    path: /metrics

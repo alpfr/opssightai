@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jhb-streampulse-ingress
+  namespace: jhb-streampulse
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    networking.gke.io/managed-certificates: "jhb-streampulse-cert"
+    kubernetes.io/ingress.allow-http: "true"
+spec:
+  defaultBackend:
+    service:
+      name: jhb-streampulse
+      port:
+        number: 80
+  rules:
+  - host: streampulse.jesushouse.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: jhb-streampulse
+            port:
+              number: 80
+  - host: www.streampulse.jesushouse.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: jhb-streampulse
+            port:
+              number: 80

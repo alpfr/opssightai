@@ -1,0 +1,22 @@
+// Add this to server.js after line 100 (before /api/data routes)
+
+/* ── GET /health — Health check endpoint ────────────────────────────── */
+app.get("/health", (_req, res) => {
+  res.json({ 
+    status: "healthy", 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    version: "2.0.0"
+  });
+});
+
+/* ── GET /ready — Readiness check ───────────────────────────────────── */
+app.get("/ready", (_req, res) => {
+  try {
+    // Check if database is accessible
+    getStats();
+    res.json({ status: "ready" });
+  } catch (err) {
+    res.status(503).json({ status: "not ready", error: err.message });
+  }
+});
