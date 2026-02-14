@@ -1,11 +1,6 @@
-# JHB StreamPulse Dashboard v2.0
+# JHB StreamPulse Dashboard v2.1
 
-Streaming analytics dashboard for Jesus House Baltimore with SQLite backend, CSV upload/export, and admin authentication.
-
-**🚀 Now Deployed on Google Kubernetes Engine!**
-
-- **Production URL**: http://35.186.198.61
-- **Status**: ✅ Running with 2 pods, auto-scaling enabled
+Streaming analytics dashboard for Jesus House Baltimore with SQLite backend, CSV upload/export, admin authentication, and AI-powered insights via Claude.
 
 ## Quick Start (Mac)
 
@@ -15,7 +10,7 @@ chmod +x start.command
 ./start.command
 ```
 
-Opens at **http://localhost:3000**
+Opens at **http://localhost:8000**
 
 ## Manual Setup
 
@@ -32,6 +27,48 @@ npx vite build
 
 # 4. Start server
 node server.js
+```
+
+## AI Insights (Powered by Claude)
+
+StreamPulse can analyze your streaming data with AI and generate natural-language summaries, trend highlights, platform analysis, alerts, and actionable recommendations.
+
+### Setup
+
+1. Get an API key from [console.anthropic.com](https://console.anthropic.com) → **API Keys** → **Create Key**
+2. Start the server with the key:
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
+node server.js
+```
+
+The server banner will show `✨ AI Insights: ON` when configured.
+
+### How It Works
+
+- **Auto-generate after upload** — Every CSV upload automatically triggers an AI analysis in the background
+- **Manual generate** — Admins can click the **Generate** button in the AI Insights panel anytime
+- **View insights** — Click the **✨ AI Insights** button in the header, or the purple banner on the Overview tab
+
+### What You Get
+
+| Section | Description |
+|---------|-------------|
+| **Executive Summary** | 2-3 sentence overview of streaming health |
+| **Key Highlights** | 4-6 specific insights with trend icons |
+| **Platform Analysis** | Which platforms are growing or declining |
+| **Alerts** | Warnings and observations with severity levels |
+| **Recommendation** | One specific, actionable suggestion for the media team |
+
+### Cost
+
+Each AI Insights generation costs roughly **$0.01–$0.02** (uses Claude Sonnet, ~1,500 tokens per call). Very affordable — even generating daily would cost under $1/month.
+
+### Docker with AI
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-api03-your-key docker compose up -d
 ```
 
 ## CSV Upload
@@ -60,79 +97,42 @@ Click **Export CSV** to download all current data as a flat CSV file.
 | GET | `/api/stats` | Summary statistics |
 | GET | `/api/uploads` | Upload history |
 | GET | `/api/export` | Download data as CSV |
+| GET | `/api/insights` | Latest AI insight |
+| GET | `/api/insights/status` | AI configuration status |
+| GET | `/api/insights/history` | Past insight summaries |
 | POST | `/api/auth` | Verify admin PIN |
 | POST | `/api/upload` | Upload CSV (requires admin) |
 | POST | `/api/data` | Manual entry (requires admin) |
+| POST | `/api/insights/generate` | Generate new AI insight (requires admin) |
 | DELETE | `/api/data/:service` | Delete service data (requires admin) |
 
-## Production Deployment (GKE)
-
-**Currently Deployed**: ✅ Running on Google Kubernetes Engine
-
-### Quick Deploy
-```bash
-# Deploy to GKE
-./deploy-to-gke.sh
-```
-
-### Access Production
-- **URL**: http://35.186.198.61
-- **API**: http://35.186.198.61/api/stats
-- **Export**: http://35.186.198.61/api/export
-
-### Deployment Details
-- **Platform**: Google Kubernetes Engine
-- **Cluster**: sermon-slicer-cluster (us-central1)
-- **Replicas**: 2-5 (auto-scaling)
-- **Storage**: 5Gi persistent volume
-- **SSL**: Google-managed certificate (provisioning)
-
-### Management Commands
-```bash
-# Check status
-kubectl get pods -n jhb-streampulse
-
-# View logs
-kubectl logs -f deployment/jhb-streampulse -n jhb-streampulse
-
-# Check ingress
-kubectl get ingress -n jhb-streampulse
-
-# Port forward for testing
-kubectl port-forward -n jhb-streampulse service/jhb-streampulse 8080:80
-```
-
-**📘 Complete Guide**: See [GKE_DEPLOYMENT_GUIDE.md](GKE_DEPLOYMENT_GUIDE.md)  
-**🎉 Deployment Summary**: See [DEPLOYMENT_SUCCESS.md](DEPLOYMENT_SUCCESS.md)
-
----
-
-## Docker Deployment (Local)
+## Docker Deployment
 
 ```bash
-# Build and run locally
+# Build and run
 docker compose up -d
 
-# With custom admin PIN
-ADMIN_PIN=5678 docker compose up -d
+# With custom admin PIN and AI enabled
+ADMIN_PIN=5678 ANTHROPIC_API_KEY=sk-ant-api03-your-key docker compose up -d
 ```
 
 ## Environment Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `PORT` | `3000` | Server port |
+| `PORT` | `8000` | Server port |
 | `ADMIN_PIN` | `1234` | Admin authentication PIN |
+| `ANTHROPIC_API_KEY` | *(none)* | Claude API key for AI Insights (optional) |
 
 ## Project Structure
 
 ```
-├── server.js          # Express API server
+├── server.js          # Express API server + AI insights engine
 ├── db.js              # SQLite database (sql.js)
 ├── csv-parser.js      # JHB CSV format parser
 ├── seed.js            # Database seeder
 ├── src/
-│   ├── Dashboard.jsx  # React dashboard
+│   ├── Dashboard.jsx  # React dashboard + AI insights panel
 │   └── main.jsx       # Entry point
 ├── public/            # Built frontend
 ├── data/
@@ -152,6 +152,7 @@ SQLite file at `data/streampulse.db`. Back up by copying this single file.
 - **special_events** — Event metadata (14 DOG, Solution Night, etc.)
 - **special_event_data** — Daily viewer counts for events
 - **upload_history** — CSV upload audit log
+- **ai_insights** — AI-generated analysis history
 
 ## Services Tracked
 
@@ -161,38 +162,3 @@ SQLite file at `data/streampulse.db`. Back up by copying this single file.
 | JHB Services | YouTube, Facebook, X, Instagram, Telegram, Emerge, BoxCast |
 | JHB Charlotte | YouTube, Facebook, X, Instagram, Telegram |
 | Bible Study | YouTube, Facebook, X, Instagram, Telegram, Zoom, BoxCast |
-
----
-
-## 📚 Documentation
-
-- **[GKE Deployment Guide](GKE_DEPLOYMENT_GUIDE.md)** - Complete deployment instructions
-- **[Deployment Success](DEPLOYMENT_SUCCESS.md)** - Current deployment status and access info
-- **[Kubernetes Manifests](k8s/)** - All K8s configuration files
-
----
-
-## 🔧 Tech Stack
-
-- **Frontend**: React 18 + Vite 7
-- **Backend**: Node.js 20 + Express
-- **Database**: SQLite (sql.js)
-- **Charts**: Recharts
-- **Icons**: Lucide React
-- **Deployment**: Docker + Kubernetes (GKE)
-
----
-
-## 📞 Support
-
-For deployment issues:
-- Check logs: `kubectl logs -f deployment/jhb-streampulse -n jhb-streampulse`
-- Check status: `kubectl get all -n jhb-streampulse`
-- Review: [GKE_DEPLOYMENT_GUIDE.md](GKE_DEPLOYMENT_GUIDE.md)
-
----
-
-**Version**: 2.0.0  
-**Deployed**: February 13, 2026  
-**Platform**: Google Kubernetes Engine  
-**Status**: ✅ Production Ready

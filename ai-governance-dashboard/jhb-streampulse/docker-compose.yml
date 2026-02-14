@@ -7,6 +7,7 @@ services:
       - NODE_ENV=production
       - PORT=8000
       - ADMIN_PIN=${ADMIN_PIN:-1234}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
     volumes:
       - streampulse-data:/app/data    # Persist SQLite database
     restart: unless-stopped

@@ -5,7 +5,7 @@ metadata:
   namespace: jhb-streampulse
   labels:
     app: jhb-streampulse
-    version: v2.0.0
+    version: v2.1.0
 spec:
   replicas: 2
   strategy:
@@ -20,11 +20,11 @@ spec:
     metadata:
       labels:
         app: jhb-streampulse
-        version: v2.0.0
+        version: v2.1.0
     spec:
       containers:
       - name: jhb-streampulse
-        image: gcr.io/alpfr-splunk-integration/jhb-streampulse:latest
+        image: gcr.io/alpfr-splunk-integration/jhb-streampulse:v2.1.0
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
@@ -43,9 +43,14 @@ spec:
               key: PORT
         - name: ADMIN_PIN
           valueFrom:
-            secretKeyRef:
-              name: jhb-streampulse-secrets
+            configMapKeyRef:
+              name: jhb-streampulse-config
               key: ADMIN_PIN
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: jhb-streampulse-ai-secret
+              key: ANTHROPIC_API_KEY
         volumeMounts:
         - name: data
           mountPath: /app/data

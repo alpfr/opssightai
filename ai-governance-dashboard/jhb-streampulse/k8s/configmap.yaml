@@ -6,3 +6,4 @@ metadata:
 data:
   NODE_ENV: "production"
   PORT: "8000"
+  ADMIN_PIN: "1234"

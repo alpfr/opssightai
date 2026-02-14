@@ -33,6 +33,10 @@ export async function initDB() {
   db.run(`CREATE TABLE IF NOT EXISTS upload_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT, filename TEXT NOT NULL, uploaded_at TEXT NOT NULL DEFAULT (datetime('now')),
     mode TEXT NOT NULL, rows_added INTEGER DEFAULT 0, rows_updated INTEGER DEFAULT 0, rows_total INTEGER DEFAULT 0)`);
+  db.run(`CREATE TABLE IF NOT EXISTS ai_insights (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, generated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    trigger_type TEXT NOT NULL DEFAULT 'upload', summary TEXT NOT NULL, highlights TEXT,
+    alerts TEXT, raw_prompt_tokens INTEGER DEFAULT 0, raw_completion_tokens INTEGER DEFAULT 0)`);
   db.run("CREATE INDEX IF NOT EXISTS idx_weekly_service ON weekly_data(service)");
   db.run("CREATE INDEX IF NOT EXISTS idx_weekly_date ON weekly_data(date)");
   save();
@@ -146,3 +150,18 @@ export function getStats() {
 }
 
 export function deleteServiceData(svc) { db.run("DELETE FROM weekly_data WHERE service=?", [svc]); save(); }
+
+/* ── AI Insights ───────────────────────────────────────────────────── */
+export function saveInsight({ trigger_type, summary, highlights, alerts, prompt_tokens, completion_tokens }) {
+  db.run(`INSERT INTO ai_insights (trigger_type, summary, highlights, alerts, raw_prompt_tokens, raw_completion_tokens)
+    VALUES (?,?,?,?,?,?)`, [trigger_type || "upload", summary, highlights || "[]", alerts || "[]", prompt_tokens || 0, completion_tokens || 0]);
+  save();
+}
+
+export function getLatestInsight() {
+  return queryOne("SELECT * FROM ai_insights ORDER BY generated_at DESC LIMIT 1");
+}
+
+export function getInsightHistory(limit = 10) {
+  return queryAll("SELECT id, generated_at, trigger_type, summary FROM ai_insights ORDER BY generated_at DESC LIMIT ?", [limit]);
+}

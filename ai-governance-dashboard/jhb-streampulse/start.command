@@ -1,6 +1,6 @@
 #!/bin/bash
 # ╔════════════════════════════════════════════╗
-# ║   JHB StreamPulse Dashboard v2.0           ║
+# ║   JHB StreamPulse Dashboard v2.1           ║
 # ║   Double-click to launch                   ║
 # ╚════════════════════════════════════════════╝
 
@@ -9,7 +9,7 @@ clear
 
 echo ""
 echo "  ╔══════════════════════════════════════════════╗"
-echo "  ║   JHB StreamPulse Dashboard v2.0             ║"
+echo "  ║   JHB StreamPulse Dashboard v2.1             ║"
 echo "  ╚══════════════════════════════════════════════╝"
 echo ""
 
@@ -52,6 +52,11 @@ fi
 echo ""
 echo "  🚀 Starting server..."
 echo "  📊 Dashboard: http://localhost:8000"
+if [ -n "$ANTHROPIC_API_KEY" ]; then
+  echo "  ✨ AI Insights: ON"
+else
+  echo "  💡 AI Insights: OFF (export ANTHROPIC_API_KEY=sk-... to enable)"
+fi
 echo ""
 echo "  Press Ctrl+C to stop"
 echo ""

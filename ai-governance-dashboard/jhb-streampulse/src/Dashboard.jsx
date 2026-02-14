@@ -6,7 +6,8 @@ import {
 import {
   Search, Bell, TrendingUp, TrendingDown, Upload, Plus, X, Eye, Calendar,
   AlertCircle, CheckCircle, Filter, BarChart3, Layers, Lock, Unlock, LogOut, Shield,
-  Download, FileText, RefreshCw, Database, UploadCloud, Check, Loader
+  Download, FileText, RefreshCw, Database, UploadCloud, Check, Loader, HelpCircle, Info,
+  ChevronRight, Monitor, Sparkles, Zap, Star, MessageSquare
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -462,6 +463,412 @@ function UploadModal({ onClose, adminPin, onUploadComplete, color, gradient }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
+   AI INSIGHTS PANEL
+   ═══════════════════════════════════════════════════════════════════════ */
+
+const INSIGHT_ICONS = {
+  trending_up: TrendingUp,
+  trending_down: TrendingDown,
+  star: Star,
+  alert: AlertCircle,
+  zap: Zap,
+};
+
+const SEVERITY_STYLES = {
+  info:    { bg: "rgba(99,102,241,0.08)", border: "rgba(99,102,241,0.2)", color: "#818CF8", icon: Info },
+  warning: { bg: "rgba(245,158,11,0.08)", border: "rgba(245,158,11,0.2)", color: "#F59E0B", icon: AlertCircle },
+  success: { bg: "rgba(52,211,153,0.08)", border: "rgba(52,211,153,0.2)", color: "#34D399", icon: CheckCircle },
+};
+
+const SERVICE_COLORS = { jhb: "#6366F1", insights: "#F59E0B", charlotte: "#EC4899", biblestudy: "#10B981", all: "#818CF8" };
+
+function InsightsPanel({ insights, onClose, onGenerate, isAdmin, isLoading, error }) {
+  const overlay = { position: "fixed", inset: 0, background: "rgba(5,5,15,0.85)", backdropFilter: "blur(8px)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 };
+  const modal = { background: "#12122a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, width: "100%", maxWidth: 680, maxHeight: "85vh", overflow: "auto", position: "relative" };
+
+  const hasData = insights && insights.available;
+
+  return (
+    <div style={overlay} onClick={onClose}>
+      <div style={modal} onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div style={{ padding: "20px 24px 16px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "sticky", top: 0, background: "#12122a", zIndex: 1, borderRadius: "20px 20px 0 0" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg, #8B5CF6, #6366F1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Sparkles size={18} color="#fff" />
+            </div>
+            <div>
+              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#fff" }}>AI Insights</h2>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>
+                {hasData ? `Generated ${new Date(insights.generated_at + "Z").toLocaleString()}` : "Powered by Claude"}
+              </div>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {isAdmin && (
+              <button onClick={onGenerate} disabled={isLoading}
+                style={{ display: "flex", alignItems: "center", gap: 5, padding: "7px 14px", borderRadius: 9, border: "none", background: isLoading ? "rgba(139,92,246,0.15)" : "linear-gradient(135deg, #8B5CF6, #6366F1)", color: "#fff", cursor: isLoading ? "default" : "pointer", fontSize: 11, fontWeight: 600, opacity: isLoading ? 0.7 : 1 }}>
+                {isLoading ? <><Loader size={12} style={{ animation: "spin 1s linear infinite" }} /> Analyzing...</> : <><RefreshCw size={12} /> Generate</>}
+              </button>
+            )}
+            <button onClick={onClose} style={{ background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 8, padding: 6, cursor: "pointer", color: "rgba(255,255,255,0.4)" }}>
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+
+        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+
+        <div style={{ padding: "16px 24px 24px" }}>
+          {error && (
+            <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)", marginBottom: 16, display: "flex", alignItems: "flex-start", gap: 10 }}>
+              <AlertCircle size={16} color="#F87171" style={{ flexShrink: 0, marginTop: 1 }} />
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: "#F87171", marginBottom: 2 }}>Error</div>
+                <div style={{ fontSize: 11, color: "rgba(248,113,113,0.7)", lineHeight: 1.5 }}>{error}</div>
+              </div>
+            </div>
+          )}
+
+          {!hasData && !isLoading && !error && (
+            <div style={{ textAlign: "center", padding: "40px 20px" }}>
+              <Sparkles size={40} color="rgba(139,92,246,0.3)" style={{ marginBottom: 16 }} />
+              <h3 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 700, color: "rgba(255,255,255,0.6)" }}>No Insights Yet</h3>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", lineHeight: 1.6, maxWidth: 380, margin: "0 auto 20px" }}>
+                {isAdmin
+                  ? "Click \"Generate\" to analyze your streaming data with AI, or upload a CSV to auto-generate insights."
+                  : "Log in as admin and upload a CSV or click Generate to create AI-powered insights."}
+              </p>
+              {!insights?.configured && (
+                <div style={{ padding: "10px 16px", borderRadius: 10, background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.15)", display: "inline-flex", alignItems: "center", gap: 8 }}>
+                  <AlertCircle size={14} color="#F59E0B" />
+                  <span style={{ fontSize: 11, color: "#F59E0B" }}>Set ANTHROPIC_API_KEY environment variable to enable AI insights</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {isLoading && !hasData && (
+            <div style={{ textAlign: "center", padding: "50px 20px" }}>
+              <div style={{ width: 48, height: 48, borderRadius: "50%", background: "linear-gradient(135deg, #8B5CF6, #6366F1)", display: "inline-flex", alignItems: "center", justifyContent: "center", marginBottom: 16, animation: "pulse 2s ease-in-out infinite" }}>
+                <Sparkles size={22} color="#fff" />
+              </div>
+              <style>{`@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.08); opacity: 0.8; } }`}</style>
+              <h3 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 700, color: "rgba(255,255,255,0.7)" }}>Analyzing your data...</h3>
+              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>Claude is reviewing trends across all services and platforms</p>
+            </div>
+          )}
+
+          {hasData && (
+            <>
+              {/* Executive Summary */}
+              <div style={{ padding: "16px 18px", borderRadius: 14, background: "linear-gradient(135deg, rgba(139,92,246,0.08), rgba(99,102,241,0.04))", border: "1px solid rgba(139,92,246,0.15)", marginBottom: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                  <MessageSquare size={13} color="#A78BFA" />
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", textTransform: "uppercase", letterSpacing: 0.8 }}>Executive Summary</span>
+                </div>
+                <p style={{ margin: 0, fontSize: 13, lineHeight: 1.7, color: "rgba(255,255,255,0.75)" }}>
+                  {insights.summary}
+                </p>
+              </div>
+
+              {/* Highlights */}
+              {insights.highlights && insights.highlights.length > 0 && (
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 10 }}>Key Highlights</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                    {insights.highlights.map((h, i) => {
+                      const IconComp = INSIGHT_ICONS[h.icon] || Zap;
+                      const svcColor = SERVICE_COLORS[h.service] || "#818CF8";
+                      return (
+                        <div key={i} style={{ padding: "12px 14px", borderRadius: 12, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                            <IconComp size={14} color={svcColor} />
+                            <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.8)" }}>{h.title}</span>
+                          </div>
+                          <div style={{ fontSize: 11, lineHeight: 1.6, color: "rgba(255,255,255,0.4)" }}>{h.detail}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Platform Insight */}
+              {insights.platform_insight && (
+                <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(99,102,241,0.04)", border: "1px solid rgba(99,102,241,0.1)", marginBottom: 16, display: "flex", alignItems: "flex-start", gap: 10 }}>
+                  <BarChart3 size={16} color="#6366F1" style={{ flexShrink: 0, marginTop: 2 }} />
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#818CF8", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Platform Analysis</div>
+                    <div style={{ fontSize: 12, lineHeight: 1.6, color: "rgba(255,255,255,0.55)" }}>{insights.platform_insight}</div>
+                  </div>
+                </div>
+              )}
+
+              {/* Alerts */}
+              {insights.alerts && insights.alerts.length > 0 && (
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 10 }}>Alerts & Observations</div>
+                  {insights.alerts.map((a, i) => {
+                    const s = SEVERITY_STYLES[a.severity] || SEVERITY_STYLES.info;
+                    const AlertIcon = s.icon;
+                    return (
+                      <div key={i} style={{ padding: "10px 14px", borderRadius: 10, background: s.bg, border: `1px solid ${s.border}`, marginBottom: 6, display: "flex", alignItems: "center", gap: 10 }}>
+                        <AlertIcon size={14} color={s.color} style={{ flexShrink: 0 }} />
+                        <span style={{ fontSize: 12, color: s.color, lineHeight: 1.5 }}>{a.message}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Recommendation */}
+              {insights.recommendation && (
+                <div style={{ padding: "14px 18px", borderRadius: 14, background: "linear-gradient(135deg, rgba(52,211,153,0.06), rgba(16,185,129,0.03))", border: "1px solid rgba(52,211,153,0.15)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                    <Sparkles size={13} color="#34D399" />
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "#34D399", textTransform: "uppercase", letterSpacing: 0.8 }}>Recommendation</span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: 12, lineHeight: 1.7, color: "rgba(255,255,255,0.6)" }}>
+                    {insights.recommendation}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Footer */}
+          <div style={{ marginTop: 20, paddingTop: 14, borderTop: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.15)" }}>Powered by Claude · Anthropic</div>
+            <button onClick={onClose} style={{ padding: "8px 20px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #8B5CF6, #6366F1)", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ABOUT / HELP MODAL
+   ═══════════════════════════════════════════════════════════════════════ */
+
+function AboutModal({ onClose }) {
+  const overlay = { position: "fixed", inset: 0, background: "rgba(5,5,15,0.85)", backdropFilter: "blur(8px)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 };
+  const modal = { background: "#12122a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, width: "100%", maxWidth: 640, maxHeight: "85vh", overflow: "auto", position: "relative" };
+  const sectionTitle = { fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 10, display: "flex", alignItems: "center", gap: 8 };
+  const text = { fontSize: 12, lineHeight: 1.7, color: "rgba(255,255,255,0.5)" };
+  const featureCard = { background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 12, padding: 14, marginBottom: 8 };
+  const featureTitle = { fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.8)", marginBottom: 4, display: "flex", alignItems: "center", gap: 6 };
+  const featureText = { fontSize: 11, lineHeight: 1.6, color: "rgba(255,255,255,0.4)" };
+  const kbd = { display: "inline-block", padding: "2px 7px", borderRadius: 5, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", fontSize: 10, fontFamily: "'Space Mono', monospace", color: "rgba(255,255,255,0.5)", marginLeft: 2, marginRight: 2 };
+  const divider = { height: 1, background: "rgba(255,255,255,0.04)", margin: "18px 0" };
+  const badge = (color, bg) => ({ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 8px", borderRadius: 6, background: bg, color: color, fontSize: 10, fontWeight: 600 });
+
+  return (
+    <div style={overlay} onClick={onClose}>
+      <div style={modal} onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div style={{ padding: "20px 24px 16px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "sticky", top: 0, background: "#12122a", zIndex: 1, borderRadius: "20px 20px 0 0" }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg, #6366F1, #4F46E5)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: "#fff" }}>JH</div>
+              <div>
+                <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#fff" }}>JHB StreamPulse</h2>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>v2.0 — Online Streaming Viewers Dashboard</div>
+              </div>
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 8, padding: 6, cursor: "pointer", color: "rgba(255,255,255,0.4)" }}>
+            <X size={16} />
+          </button>
+        </div>
+
+        <div style={{ padding: "16px 24px 24px" }}>
+
+          {/* What is StreamPulse */}
+          <div style={sectionTitle}><Monitor size={15} color="#6366F1" /> About StreamPulse</div>
+          <p style={text}>
+            StreamPulse tracks online streaming viewers for Jesus House Baltimore across multiple platforms
+            and services. It provides weekly analytics, trend analysis, and special event tracking to help
+            church leadership understand audience engagement and growth patterns.
+          </p>
+
+          <div style={divider} />
+
+          {/* Services */}
+          <div style={sectionTitle}><Layers size={15} color="#EC4899" /> Services Tracked</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 4 }}>
+            <div style={featureCard}>
+              <div style={featureTitle}><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#F59E0B" }}></span> Insights with PT</div>
+              <div style={featureText}>YouTube, Facebook, X, Instagram, PT's YouTube</div>
+            </div>
+            <div style={featureCard}>
+              <div style={featureTitle}><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#6366F1" }}></span> JHB Services/Programs</div>
+              <div style={featureText}>YouTube, Facebook, X, Instagram, Telegram, Emerge, BoxCast</div>
+            </div>
+            <div style={featureCard}>
+              <div style={featureTitle}><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#EC4899" }}></span> JHB Charlotte</div>
+              <div style={featureText}>YouTube, Facebook, X, Instagram, Telegram</div>
+            </div>
+            <div style={featureCard}>
+              <div style={featureTitle}><span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10B981" }}></span> Bible Study – Word Power</div>
+              <div style={featureText}>YouTube, Facebook, X, Instagram, Telegram, Zoom, BoxCast</div>
+            </div>
+          </div>
+
+          <div style={divider} />
+
+          {/* Dashboard Tabs */}
+          <div style={sectionTitle}><BarChart3 size={15} color="#F59E0B" /> Dashboard Tabs</div>
+
+          <div style={featureCard}>
+            <div style={featureTitle}><Eye size={13} color="#6366F1" /> Overview</div>
+            <div style={featureText}>Main view showing the weekly viewer chart, platform breakdown with percentages, and a donut chart of the current distribution. Toggle between Area, Line, and Bar chart styles using the controls above the chart.</div>
+          </div>
+          <div style={featureCard}>
+            <div style={featureTitle}><TrendingUp size={13} color="#34D399" /> Trends</div>
+            <div style={featureText}>Month-over-month growth analysis. Shows how total viewers and individual platform numbers are changing over time, with percentage growth indicators.</div>
+          </div>
+          <div style={featureCard}>
+            <div style={featureTitle}><Calendar size={13} color="#F59E0B" /> Weekly Comparison</div>
+            <div style={featureText}>Side-by-side stacked bar chart comparing each week's platform breakdown. Useful for spotting which platforms are growing or shrinking week-to-week.</div>
+          </div>
+          <div style={featureCard}>
+            <div style={featureTitle}><Layers size={13} color="#EC4899" /> All Services</div>
+            <div style={featureText}>Cross-service comparison on one chart — compare JHB, Charlotte, Insights, and Bible Study side by side. Special Events are also displayed at the bottom of this tab, showing viewer data for 14 Days of Glory, The Word Works, MYPC, PENIEL, GLC, Solution Night, Watch Night, and more.</div>
+          </div>
+          <div style={featureCard}>
+            <div style={featureTitle}><FileText size={13} color="#818CF8" /> Data Table</div>
+            <div style={featureText}>Full spreadsheet view of all weekly records with platform columns. Sorted by most recent first. Use the date filter to narrow the range.</div>
+          </div>
+
+          <div style={divider} />
+
+          {/* Header Controls */}
+          <div style={sectionTitle}><Filter size={15} color="#34D399" /> Controls & Filters</div>
+
+          <div style={featureCard}>
+            <div style={featureTitle}><Calendar size={13} color="#F59E0B" /> Date Filter</div>
+            <div style={featureText}>Click the date button in the header to set a "From" and "To" date range. All charts and tables filter to only show data within that range. Click "Clear" to reset.</div>
+          </div>
+          <div style={featureCard}>
+            <div style={featureTitle}><Search size={13} color="#818CF8" /> Search</div>
+            <div style={featureText}>Type a platform name (e.g. "youtube" or "zoom") to filter the platform breakdown and highlight matching data. Works across all tabs.</div>
+          </div>
+          <div style={featureCard}>
+            <div style={featureTitle}><Bell size={13} color="#F59E0B" /> Notifications</div>
+            <div style={featureText}>The bell icon shows data insights like peak weeks, growth streaks, and notable changes. Red badge shows unread count. Click to read and dismiss.</div>
+          </div>
+
+          <div style={divider} />
+
+          {/* Admin Features */}
+          <div style={sectionTitle}><Shield size={15} color="#34D399" /> Admin Features</div>
+          <p style={{ ...text, marginBottom: 12 }}>
+            Click <span style={badge("rgba(255,255,255,0.5)", "rgba(255,255,255,0.05)")}>🔒 Add Data</span> and enter the admin PIN to unlock these features. Admin session lasts 30 minutes.
+          </p>
+
+          <div style={featureCard}>
+            <div style={featureTitle}><Plus size={13} color="#6366F1" /> Add Data</div>
+            <div style={featureText}>Manually add a single week's viewer data. Select the service, enter the date, and fill in viewer counts per platform.</div>
+          </div>
+          <div style={featureCard}>
+            <div style={featureTitle}><UploadCloud size={13} color="#818CF8" /> Upload CSV</div>
+            <div style={featureText}>
+              Drag & drop or browse for a CSV file in the JHB format. Two modes available:
+              <br />• <strong style={{ color: "rgba(255,255,255,0.6)" }}>Merge</strong> — adds new data and updates existing rows (safe, non-destructive)
+              <br />• <strong style={{ color: "rgba(255,255,255,0.6)" }}>Replace</strong> — clears all existing data and replaces with the uploaded file
+              <br />The parser automatically handles the multi-service side-by-side format and special events sections.
+            </div>
+          </div>
+          <div style={featureCard}>
+            <div style={featureTitle}><Download size={13} color="#34D399" /> Export CSV</div>
+            <div style={featureText}>Download all data as a CSV file. Available to all users (no admin required). Includes all services, dates, and platform columns.</div>
+          </div>
+
+          <div style={divider} />
+
+          {/* AI Insights */}
+          <div style={sectionTitle}><Sparkles size={15} color="#8B5CF6" /> AI Insights (Powered by Claude)</div>
+          <p style={text}>
+            StreamPulse can analyze your streaming data with AI and generate natural-language summaries,
+            trend highlights, platform analysis, alerts, and actionable recommendations.
+          </p>
+
+          <div style={featureCard}>
+            <div style={featureTitle}><Sparkles size={13} color="#8B5CF6" /> How It Works</div>
+            <div style={featureText}>
+              <br />• <strong style={{ color: "rgba(255,255,255,0.6)" }}>Auto-generate after upload</strong> — Every CSV upload automatically triggers AI analysis in the background
+              <br />• <strong style={{ color: "rgba(255,255,255,0.6)" }}>Manual generate</strong> — Admins can click "Generate" in the AI Insights panel anytime
+              <br />• <strong style={{ color: "rgba(255,255,255,0.6)" }}>View insights</strong> — Click the ✨ AI Insights button in the header, or the purple banner on the Overview tab
+            </div>
+          </div>
+          <div style={featureCard}>
+            <div style={featureTitle}><Zap size={13} color="#F59E0B" /> Setup</div>
+            <div style={featureText}>
+              Get an API key from <strong style={{ color: "rgba(255,255,255,0.6)" }}>console.anthropic.com</strong> → API Keys → Create Key. Then start the server with: <span style={kbd}>ANTHROPIC_API_KEY=sk-ant-... node server.js</span>
+            </div>
+          </div>
+          <div style={featureCard}>
+            <div style={featureTitle}><Info size={13} color="#34D399" /> Cost</div>
+            <div style={featureText}>
+              Each AI Insights generation costs roughly <strong style={{ color: "#34D399" }}>$0.01–$0.02</strong> (uses Claude Sonnet, ~1,500 tokens per call). Very affordable — even generating daily would cost under $1/month.
+            </div>
+          </div>
+
+          <div style={divider} />
+
+          {/* Technical Info */}
+          <div style={sectionTitle}><Database size={15} color="#818CF8" /> Technical Details</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            <div style={featureCard}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6 }}>Stack</div>
+              <div style={featureText}>Node.js + Express backend, SQLite database, React frontend with Recharts</div>
+            </div>
+            <div style={featureCard}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6 }}>API</div>
+              <div style={featureText}>REST API at /api/data, /api/stats, /api/export, /api/upload, /api/special-events</div>
+            </div>
+            <div style={featureCard}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6 }}>Running</div>
+              <div style={featureText}>Server on port 8000 — start with <span style={kbd}>node server.js</span> or <span style={kbd}>start.command</span></div>
+            </div>
+            <div style={featureCard}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6 }}>Deployment</div>
+              <div style={featureText}>Local, Docker, or Kubernetes (EKS/GKE). See README.md for full instructions.</div>
+            </div>
+          </div>
+
+          <div style={divider} />
+
+          {/* Quick Tips */}
+          <div style={sectionTitle}><CheckCircle size={15} color="#6366F1" /> Quick Tips</div>
+          <div style={{ ...text, lineHeight: 2 }}>
+            <span style={{ color: "rgba(255,255,255,0.65)" }}>•</span> Switch between services using the colored tabs below the header<br/>
+            <span style={{ color: "rgba(255,255,255,0.65)" }}>•</span> Hover over any chart element to see detailed tooltip data<br/>
+            <span style={{ color: "rgba(255,255,255,0.65)" }}>•</span> Special Events are in the <span style={badge("#EC4899", "rgba(236,72,153,0.1)")}>All Services</span> tab — scroll down to see them<br/>
+            <span style={{ color: "rgba(255,255,255,0.65)" }}>•</span> The stat cards show total viewers, latest week, weekly average, and peak week<br/>
+            <span style={{ color: "rgba(255,255,255,0.65)" }}>•</span> Upload new CSV data anytime — Merge mode keeps existing data safe<br/>
+            <span style={{ color: "rgba(255,255,255,0.65)" }}>•</span> Export CSV to get all your data in spreadsheet format<br/>
+            <span style={{ color: "rgba(255,255,255,0.65)" }}>•</span> Set up ANTHROPIC_API_KEY to enable AI-powered insights after every upload
+          </div>
+
+          {/* Footer */}
+          <div style={{ marginTop: 20, padding: "14px 0 0", borderTop: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)" }}>Jesus House Baltimore © 2025–2026</div>
+            <button onClick={onClose} style={{ padding: "8px 20px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #6366F1, #4F46E5)", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+              Got it!
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
    MAIN DASHBOARD
    ═══════════════════════════════════════════════════════════════════════ */
 
@@ -483,8 +890,14 @@ export default function StreamPulse() {
   const [adminTimer, setAdminTimer] = useState(null);
   const [adminPin, setAdminPin] = useState("");
   const [showUpload, setShowUpload] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
+  const [insights, setInsights] = useState(null);
+  const [insightsLoading, setInsightsLoading] = useState(false);
+  const [insightsError, setInsightsError] = useState(null);
+  const [showInsights, setShowInsights] = useState(false);
+  const [aiConfigured, setAiConfigured] = useState(false);
 
   // Load data from API
   const loadData = async () => {
@@ -504,7 +917,48 @@ export default function StreamPulse() {
     }
   };
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => { loadData(); loadInsights(); }, []);
+
+  // Load existing AI insights
+  const loadInsights = async () => {
+    try {
+      const statusRes = await fetch(`${API_BASE}/insights/status`);
+      if (statusRes.ok) {
+        const status = await statusRes.json();
+        setAiConfigured(status.configured);
+        if (status.hasInsights) {
+          const res = await fetch(`${API_BASE}/insights`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.available) setInsights(data);
+          }
+        }
+      }
+    } catch { /* AI not available, that's fine */ }
+  };
+
+  // Generate new AI insights (admin only)
+  const generateInsights = async () => {
+    setInsightsLoading(true);
+    setInsightsError(null);
+    try {
+      const res = await fetch(`${API_BASE}/insights/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Admin-Pin": adminPin },
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to generate insights");
+      }
+      const data = await res.json();
+      setInsights({ available: true, ...data });
+      setShowInsights(true);
+    } catch (err) {
+      setInsightsError(err.message);
+    } finally {
+      setInsightsLoading(false);
+    }
+  };
 
   // Auto-logout admin after timeout
   useEffect(() => {
@@ -722,6 +1176,12 @@ export default function StreamPulse() {
             </button>
             </>
           )}
+          <button onClick={() => setShowInsights(true)} title="AI Insights" style={{ display: "flex", alignItems: "center", gap: 5, padding: "7px 12px", borderRadius: 8, border: insights?.available ? "1px solid rgba(139,92,246,0.3)" : "1px solid rgba(255,255,255,0.08)", background: insights?.available ? "rgba(139,92,246,0.08)" : "rgba(255,255,255,0.04)", color: insights?.available ? "#A78BFA" : "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: 11, fontWeight: 600 }}>
+            <Sparkles size={13} /> AI Insights
+          </button>
+          <button onClick={() => setShowAbout(true)} title="About & Help" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: 7, cursor: "pointer", color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center" }}>
+            <HelpCircle size={15} />
+          </button>
           <div style={{ position: "relative" }}>
             <button onClick={() => setShowNotif(!showNotif)} style={{ position: "relative", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: 7, cursor: "pointer", color: "rgba(255,255,255,0.5)" }}>
               <Bell size={15} />
@@ -868,6 +1328,28 @@ export default function StreamPulse() {
           <StatCard label="Top Platform" value={service.platforms.reduce((best, p) => ((latest[p.id] || 0) > (latest[best.id] || 0) ? p : best), service.platforms[0])?.name || "–"} change={null} color="#EC4899" sub={`${fmt(Math.max(...service.platforms.map(p => latest[p.id] || 0), 0))} viewers`} />
           <StatCard label="Grand Total (All)" value={fmt(grandTotal)} change={null} color="#6366F1" sub="All services" />
         </div>
+
+        {/* AI INSIGHTS BANNER */}
+        {insights?.available && insights?.summary && (
+          <div onClick={() => setShowInsights(true)} style={{
+            padding: "12px 18px", borderRadius: 14, marginBottom: 18, cursor: "pointer",
+            background: "linear-gradient(135deg, rgba(139,92,246,0.06), rgba(99,102,241,0.03))",
+            border: "1px solid rgba(139,92,246,0.12)",
+            display: "flex", alignItems: "center", gap: 14,
+            transition: "all 0.2s",
+          }}>
+            <div style={{ width: 32, height: 32, borderRadius: 9, background: "linear-gradient(135deg, #8B5CF6, #6366F1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Sparkles size={15} color="#fff" />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "#A78BFA", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 3 }}>AI Insights</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", lineHeight: 1.5, overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                {insights.summary}
+              </div>
+            </div>
+            <ChevronRight size={16} color="rgba(139,92,246,0.4)" style={{ flexShrink: 0 }} />
+          </div>
+        )}
 
         {/* TABS + CHART CONTROLS */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
@@ -1156,7 +1638,16 @@ export default function StreamPulse() {
 
       {showEntry && isAdmin && <EntryModal onClose={() => setShowEntry(false)} onSubmit={addEntry} service={service} />}
       {showAdminLogin && <AdminLoginModal onClose={() => setShowAdminLogin(false)} onSuccess={handleAdminLogin} color={service.color} gradient={service.gradient} />}
-      {showUpload && isAdmin && <UploadModal onClose={() => setShowUpload(false)} adminPin={adminPin} onUploadComplete={loadData} color={service.color} gradient={service.gradient} />}
+      {showUpload && isAdmin && <UploadModal onClose={() => setShowUpload(false)} adminPin={adminPin} onUploadComplete={() => { loadData(); setTimeout(loadInsights, 5000); }} color={service.color} gradient={service.gradient} />}
+      {showAbout && <AboutModal onClose={() => setShowAbout(false)} />}
+      {showInsights && <InsightsPanel
+        insights={insights}
+        onClose={() => { setShowInsights(false); setInsightsError(null); }}
+        onGenerate={generateInsights}
+        isAdmin={isAdmin}
+        isLoading={insightsLoading}
+        error={insightsError}
+      />}
       {loading && <div style={{ position:"fixed", inset:0, background:"rgba(10,10,25,0.95)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", zIndex:300 }}>
         <Database size={40} color="#6366F1" style={{ marginBottom:16, animation:"pulse 1.5s ease-in-out infinite" }} />
         <div style={{ color:"#fff", fontSize:16, fontWeight:600 }}>Loading dashboard...</div>
