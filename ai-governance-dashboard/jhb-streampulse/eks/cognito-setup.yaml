@@ -54,6 +54,7 @@ Resources:
       UserPoolId: !Ref UserPool
 
   # Cognito User Pool Client (for ALB)
+  UserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
       ClientName: !Sub '${ApplicationName}-alb-client'

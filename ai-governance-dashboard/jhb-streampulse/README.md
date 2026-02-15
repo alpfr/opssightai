@@ -4,7 +4,14 @@ Streaming analytics dashboard for Jesus House Baltimore with SQLite backend, CSV
 
 ## 🚀 Live Deployments
 
-### AWS EKS (Production)
+### AWS EKS with Authentication (Production)
+**URL**: https://jhbstreampulse.opssightai.com  
+**Region**: us-east-1  
+**Status**: ✅ LIVE  
+**Access**: 🔐 Private - Requires login (AWS Cognito)  
+**Login**: admin@opssightai.com
+
+### AWS EKS (Public - Legacy)
 **URL**: http://k8s-jhbstrea-jhbstrea-e1e5ea8a68-c77c5936cff58e7c.elb.us-east-1.amazonaws.com  
 **Region**: us-east-1  
 **Status**: ✅ LIVE  
@@ -16,8 +23,8 @@ Streaming analytics dashboard for Jesus House Baltimore with SQLite backend, CSV
 **Status**: ✅ LIVE  
 **Access**: Public (no authentication)
 
-### 🔐 Add Authentication
-Want to require user login? See [QUICK_AUTH_SETUP.md](QUICK_AUTH_SETUP.md) to add AWS Cognito authentication with email/password in 5 minutes.
+### 🔐 Authentication Setup
+The production deployment uses AWS Cognito for user authentication with email/password login. See [COGNITO_AUTH_SETUP.md](COGNITO_AUTH_SETUP.md) for complete setup guide or [QUICK_AUTH_SETUP.md](QUICK_AUTH_SETUP.md) for quick start.
 
 See [EKS_DEPLOYMENT_GUIDE.md](EKS_DEPLOYMENT_GUIDE.md) or [GKE_DEPLOYMENT_GUIDE.md](GKE_DEPLOYMENT_GUIDE.md) for deployment instructions.
 
