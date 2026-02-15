@@ -2,6 +2,20 @@
 
 Streaming analytics dashboard for Jesus House Baltimore with SQLite backend, CSV upload/export, admin authentication, and AI-powered insights via Claude.
 
+## 🚀 Live Deployments
+
+### AWS EKS (Production)
+**URL**: http://k8s-jhbstrea-jhbstrea-e1e5ea8a68-c77c5936cff58e7c.elb.us-east-1.amazonaws.com  
+**Region**: us-east-1  
+**Status**: ✅ LIVE
+
+### Google Cloud GKE
+**URL**: http://35.186.198.61  
+**Region**: us-central1  
+**Status**: ✅ LIVE
+
+See [EKS_DEPLOYMENT_GUIDE.md](EKS_DEPLOYMENT_GUIDE.md) or [GKE_DEPLOYMENT_GUIDE.md](GKE_DEPLOYMENT_GUIDE.md) for deployment instructions.
+
 ## Quick Start (Mac)
 
 ```bash
@@ -108,6 +122,7 @@ Click **Export CSV** to download all current data as a flat CSV file.
 
 ## Docker Deployment
 
+### Local Development
 ```bash
 # Build and run
 docker compose up -d
@@ -115,6 +130,30 @@ docker compose up -d
 # With custom admin PIN and AI enabled
 ADMIN_PIN=5678 ANTHROPIC_API_KEY=sk-ant-api03-your-key docker compose up -d
 ```
+
+### Cloud Deployment
+
+#### AWS EKS
+```bash
+# Quick deployment
+cd jhb-streampulse
+export ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
+./deploy-to-eks.sh
+
+# Or create cluster first
+./create-eks-cluster.sh
+```
+
+See [EKS_DEPLOYMENT_GUIDE.md](EKS_DEPLOYMENT_GUIDE.md) for complete instructions.
+
+#### Google Cloud GKE
+```bash
+# Deploy to GKE
+cd jhb-streampulse
+./deploy-to-gke.sh
+```
+
+See [GKE_DEPLOYMENT_GUIDE.md](GKE_DEPLOYMENT_GUIDE.md) for complete instructions.
 
 ## Environment Variables
 
