@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jhb-streampulse
+  namespace: jhb-streampulse
+  labels:
+    app: jhb-streampulse
+    version: v2.1.0
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: jhb-streampulse
+  template:
+    metadata:
+      labels:
+        app: jhb-streampulse
+        version: v2.1.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/api/stats"
+    spec:
+      serviceAccountName: jhb-streampulse
+      containers:
+      - name: jhb-streampulse
+        image: gcr.io/alpfr-splunk-integration/jhb-streampulse:v2.1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: jhb-streampulse-config
+              key: NODE_ENV
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: jhb-streampulse-config
+              key: PORT
+        - name: ADMIN_PIN
+          valueFrom:
+            configMapKeyRef:
+              name: jhb-streampulse-config
+              key: ADMIN_PIN
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: jhb-streampulse-ai-secret
+              key: ANTHROPIC_API_KEY
+        volumeMounts:
+        - name: data
+          mountPath: /app/data
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /api/stats
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/stats
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: jhb-streampulse-data
+      securityContext:
+        fsGroup: 1000
