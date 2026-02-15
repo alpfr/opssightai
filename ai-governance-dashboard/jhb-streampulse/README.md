@@ -29,6 +29,10 @@ The production deployment uses AWS Cognito for user authentication with email/pa
 ### 📐 Architecture Documentation
 For comprehensive architecture details, diagrams, and technical specifications, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
+**Presentation-Ready Formats:**
+- [JHB_StreamPulse_Architecture_Design.docx](JHB_StreamPulse_Architecture_Design.docx) - Word document with table of contents
+- [JHB_StreamPulse_Architecture_Presentation.docx](JHB_StreamPulse_Architecture_Presentation.docx) - Enhanced formatting for presentations
+
 See [EKS_DEPLOYMENT_GUIDE.md](EKS_DEPLOYMENT_GUIDE.md) or [GKE_DEPLOYMENT_GUIDE.md](GKE_DEPLOYMENT_GUIDE.md) for deployment instructions.
 
 ## Quick Start (Mac)
