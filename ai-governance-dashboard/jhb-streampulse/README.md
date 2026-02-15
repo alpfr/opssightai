@@ -26,6 +26,9 @@ Streaming analytics dashboard for Jesus House Baltimore with SQLite backend, CSV
 ### 🔐 Authentication Setup
 The production deployment uses AWS Cognito for user authentication with email/password login. See [COGNITO_AUTH_SETUP.md](COGNITO_AUTH_SETUP.md) for complete setup guide or [QUICK_AUTH_SETUP.md](QUICK_AUTH_SETUP.md) for quick start.
 
+### 📐 Architecture Documentation
+For comprehensive architecture details, diagrams, and technical specifications, see [ARCHITECTURE.md](ARCHITECTURE.md).
+
 See [EKS_DEPLOYMENT_GUIDE.md](EKS_DEPLOYMENT_GUIDE.md) or [GKE_DEPLOYMENT_GUIDE.md](GKE_DEPLOYMENT_GUIDE.md) for deployment instructions.
 
 ## Quick Start (Mac)
