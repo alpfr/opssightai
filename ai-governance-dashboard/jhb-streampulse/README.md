@@ -7,12 +7,17 @@ Streaming analytics dashboard for Jesus House Baltimore with SQLite backend, CSV
 ### AWS EKS (Production)
 **URL**: http://k8s-jhbstrea-jhbstrea-e1e5ea8a68-c77c5936cff58e7c.elb.us-east-1.amazonaws.com  
 **Region**: us-east-1  
-**Status**: ✅ LIVE
+**Status**: ✅ LIVE  
+**Access**: Public (no authentication)
 
 ### Google Cloud GKE
 **URL**: http://35.186.198.61  
 **Region**: us-central1  
-**Status**: ✅ LIVE
+**Status**: ✅ LIVE  
+**Access**: Public (no authentication)
+
+### 🔐 Add Authentication
+Want to require user login? See [QUICK_AUTH_SETUP.md](QUICK_AUTH_SETUP.md) to add AWS Cognito authentication with email/password in 5 minutes.
 
 See [EKS_DEPLOYMENT_GUIDE.md](EKS_DEPLOYMENT_GUIDE.md) or [GKE_DEPLOYMENT_GUIDE.md](GKE_DEPLOYMENT_GUIDE.md) for deployment instructions.
 
