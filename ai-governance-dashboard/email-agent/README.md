@@ -173,24 +173,37 @@ pytest tests/property/
 
 ## 🚀 Deployment to AWS EKS
 
-### Prerequisites
+### Quick Start Deployment (30 minutes)
 
-- AWS CLI configured
-- kubectl installed
-- eksctl installed
-- Docker images pushed to ECR
+See **[QUICK_START_DEPLOYMENT.md](QUICK_START_DEPLOYMENT.md)** for fast-track deployment guide.
 
-### Deploy
+### Detailed Deployment Guide
+
+See **[DEPLOYMENT_PREPARATION.md](DEPLOYMENT_PREPARATION.md)** for comprehensive deployment instructions.
+
+### Automated Deployment
 
 ```bash
-# Build and push Docker images
-./scripts/build-and-push.sh
+# 1. Set up AWS infrastructure (Cognito, S3, Secrets Manager, IAM)
+bash setup-aws-infrastructure.sh
 
-# Deploy to EKS
-./scripts/deploy-to-eks.sh
+# 2. Configure k8s/secret.yaml with your credentials
+
+# 3. Run database migrations
+cd backend
+alembic upgrade head
+
+# 4. Deploy to EKS
+cd ..
+bash deploy-to-eks.sh
 ```
 
-See `DEPLOYMENT.md` for detailed deployment instructions.
+The deployment script will:
+- Build Docker images for backend and frontend
+- Push images to Amazon ECR
+- Deploy to Kubernetes cluster `jhb-streampulse-cluster`
+- Configure auto-scaling and load balancing
+- Display the application URL
 
 ## 📖 API Documentation
 
@@ -232,8 +245,23 @@ For issues and questions:
 - Review the [architecture design](.kiro/specs/email-agent-platform/design.md)
 - Open an issue on GitHub
 
-## 🎯 Roadmap
+## 🎯 Status
 
-See [tasks.md](.kiro/specs/email-agent-platform/tasks.md) for the complete implementation plan.
+**Current Status**: ✅ Production-ready MVP complete!
 
-Current status: ✅ Project structure initialized, ready for feature development
+**Completed Features**:
+- ✅ Full-stack application (FastAPI backend + React frontend)
+- ✅ User authentication with AWS Cognito
+- ✅ Gmail OAuth integration with automatic token refresh
+- ✅ Complete email management API (search, read, send, drafts, labels)
+- ✅ LangGraph AI agent for natural language email management
+- ✅ Modern React UI with responsive design
+- ✅ Database persistence with PostgreSQL
+- ✅ Redis caching and rate limiting
+- ✅ Kubernetes deployment manifests
+- ✅ Auto-scaling configuration
+- ✅ Health checks and monitoring
+
+**Ready for Deployment**: The application is production-ready and can be deployed to AWS EKS.
+
+See [tasks.md](.kiro/specs/email-agent-platform/tasks.md) for the complete implementation plan and remaining optional features (WebSocket, Slack, Webhooks, Calendar, Contacts).
