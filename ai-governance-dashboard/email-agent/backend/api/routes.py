@@ -2,18 +2,22 @@
 API Routes - Main router aggregating all endpoint modules
 """
 from fastapi import APIRouter
+from api.auth import router as auth_router
+from api.api_keys import router as api_keys_router
 
 api_router = APIRouter()
 
-# TODO: Import and include route modules as they are implemented
-# from api.auth import router as auth_router
+# Include authentication routes
+api_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+api_router.include_router(api_keys_router, prefix="/api-keys", tags=["API Keys"])
+
+# TODO: Import and include remaining route modules as they are implemented
 # from api.gmail import router as gmail_router
 # from api.emails import router as emails_router
 # from api.agent import router as agent_router
 # from api.integrations import router as integrations_router
 # from api.admin import router as admin_router
 
-# api_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 # api_router.include_router(gmail_router, prefix="/gmail", tags=["Gmail OAuth"])
 # api_router.include_router(emails_router, prefix="/emails", tags=["Email Management"])
 # api_router.include_router(agent_router, prefix="/agent", tags=["AI Agent"])
@@ -28,4 +32,5 @@ async def api_root():
         "message": "Email Agent Platform API",
         "version": "1.0.0",
         "docs": "/docs",
+        "authentication": "AWS Cognito",
     }
