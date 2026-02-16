@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: emailagent-postgres
+    environment:
+      POSTGRES_USER: emailagent
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: emailagent
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U emailagent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache & Message Broker
+  redis:
+    image: redis:7-alpine
+    container_name: emailagent-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Backend (development mode with hot reload)
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: emailagent-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./tools:/app/tools
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://emailagent:password@postgres:5432/emailagent
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+    env_file:
+      - ./backend/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Celery Worker
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: emailagent-worker
+    volumes:
+      - ./backend:/app
+      - ./tools:/app/tools
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://emailagent:password@postgres:5432/emailagent
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+    env_file:
+      - ./backend/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A worker.celery_app worker --loglevel=info
+
+  # Celery Beat (Scheduler)
+  beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: emailagent-beat
+    volumes:
+      - ./backend:/app
+      - ./tools:/app/tools
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://emailagent:password@postgres:5432/emailagent
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+    env_file:
+      - ./backend/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A worker.celery_app beat --loglevel=info
+
+volumes:
+  postgres_data:
+  redis_data:
