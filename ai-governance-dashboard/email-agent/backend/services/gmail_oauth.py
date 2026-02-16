@@ -1,17 +1,18 @@
 """
-Gmail OAuth Service with AWS Secrets Manager integration
+Gmail OAuth Service with Database storage
 """
 import json
-import boto3
-from botocore.exceptions import ClientError
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
 from typing import Dict, Optional
 from datetime import datetime, timezone
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, update
 
 from utils.config import settings
 from utils.logging_config import get_logger
+from utils.database import get_db
 
 logger = get_logger(__name__)
 
@@ -32,7 +33,6 @@ class GmailOAuthService:
     ]
     
     def __init__(self):
-        self.secrets_client = boto3.client('secretsmanager', region_name=settings.AWS_REGION)
         self.client_config = {
             "web": {
                 "client_id": settings.GOOGLE_CLIENT_ID,
@@ -78,6 +78,7 @@ class GmailOAuthService:
         self,
         code: str,
         user_id: str,
+        db: AsyncSession,
     ) -> Dict:
         """
         Exchange authorization code for access and refresh tokens.
@@ -85,6 +86,7 @@ class GmailOAuthService:
         Args:
             code: Authorization code from OAuth callback
             user_id: User ID to associate tokens with
+            db: Database session
             
         Returns:
             Dict with token information
@@ -103,8 +105,8 @@ class GmailOAuthService:
             flow.fetch_token(code=code)
             credentials = flow.credentials
             
-            # Store tokens in Secrets Manager
-            await self._store_tokens(user_id, credentials)
+            # Store tokens in database
+            await self._store_tokens(user_id, credentials, db)
             
             logger.info(f"OAuth tokens exchanged and stored for user {user_id}")
             
@@ -120,31 +122,38 @@ class GmailOAuthService:
             logger.error(f"Token exchange failed for user {user_id}: {e}")
             raise OAuthError(f"Failed to exchange authorization code: {str(e)}")
     
-    async def get_credentials(self, user_id: str) -> Optional[Credentials]:
+    async def get_credentials(self, user_id: str, db: AsyncSession) -> Optional[Credentials]:
         """
-        Get Gmail credentials for user from Secrets Manager.
+        Get Gmail credentials for user from database.
         Automatically refreshes if expired.
         
         Args:
             user_id: User ID
+            db: Database session
             
         Returns:
             Google Credentials object or None if not found
         """
         try:
-            secret_name = f"{settings.AWS_SECRETS_MANAGER_PREFIX}/gmail-oauth/{user_id}"
+            from models.gmail_oauth import GmailOAuth
             
-            response = self.secrets_client.get_secret_value(SecretId=secret_name)
-            secret_data = json.loads(response['SecretString'])
+            # Get tokens from database
+            stmt = select(GmailOAuth).where(GmailOAuth.user_id == user_id)
+            result = await db.execute(stmt)
+            oauth_record = result.scalar_one_or_none()
+            
+            if not oauth_record or not oauth_record.access_token:
+                logger.info(f"No Gmail OAuth tokens found for user {user_id}")
+                return None
             
             # Create credentials object
             credentials = Credentials(
-                token=secret_data.get('access_token'),
-                refresh_token=secret_data.get('refresh_token'),
-                token_uri=secret_data.get('token_uri'),
+                token=oauth_record.access_token,
+                refresh_token=oauth_record.refresh_token,
+                token_uri="https://oauth2.googleapis.com/token",
                 client_id=settings.GOOGLE_CLIENT_ID,
                 client_secret=settings.GOOGLE_CLIENT_SECRET,
-                scopes=secret_data.get('scopes'),
+                scopes=self.SCOPES,
             )
             
             # Check if token needs refresh
@@ -153,35 +162,28 @@ class GmailOAuthService:
                 credentials.refresh(Request())
                 
                 # Store refreshed tokens
-                await self._store_tokens(user_id, credentials)
+                await self._store_tokens(user_id, credentials, db)
             
             return credentials
             
-        except ClientError as e:
-            error_code = e.response['Error']['Code']
-            if error_code == 'ResourceNotFoundException':
-                logger.info(f"No Gmail OAuth tokens found for user {user_id}")
-                return None
-            else:
-                logger.error(f"Failed to get credentials for user {user_id}: {e}")
-                raise
         except Exception as e:
             logger.error(f"Error getting credentials for user {user_id}: {e}")
             raise
     
-    async def revoke_tokens(self, user_id: str) -> bool:
+    async def revoke_tokens(self, user_id: str, db: AsyncSession) -> bool:
         """
-        Revoke OAuth tokens and delete from Secrets Manager.
+        Revoke OAuth tokens and delete from database.
         
         Args:
             user_id: User ID
+            db: Database session
             
         Returns:
             True if successful
         """
         try:
             # Get credentials to revoke
-            credentials = await self.get_credentials(user_id)
+            credentials = await self.get_credentials(user_id, db)
             
             if credentials:
                 # Revoke with Google
@@ -191,65 +193,73 @@ class GmailOAuthService:
                 except Exception as e:
                     logger.warning(f"Failed to revoke with Google (continuing): {e}")
             
-            # Delete from Secrets Manager
-            secret_name = f"{settings.AWS_SECRETS_MANAGER_PREFIX}/gmail-oauth/{user_id}"
-            
-            try:
-                self.secrets_client.delete_secret(
-                    SecretId=secret_name,
-                    ForceDeleteWithoutRecovery=True,
+            # Clear tokens from database
+            from models.gmail_oauth import GmailOAuth
+            stmt = (
+                update(GmailOAuth)
+                .where(GmailOAuth.user_id == user_id)
+                .values(
+                    access_token=None,
+                    refresh_token=None,
+                    token_expiry=None,
+                    is_connected=False,
+                    disconnected_at=datetime.now(),
+                    updated_at=datetime.now(),
                 )
-                logger.info(f"Deleted Gmail OAuth secret for user {user_id}")
-            except ClientError as e:
-                if e.response['Error']['Code'] != 'ResourceNotFoundException':
-                    raise
+            )
+            await db.execute(stmt)
+            await db.commit()
             
+            logger.info(f"Cleared Gmail OAuth tokens for user {user_id}")
             return True
             
         except Exception as e:
             logger.error(f"Failed to revoke tokens for user {user_id}: {e}")
             return False
     
-    async def _store_tokens(self, user_id: str, credentials: Credentials) -> None:
+    async def _store_tokens(self, user_id: str, credentials: Credentials, db: AsyncSession) -> None:
         """
-        Store OAuth tokens in AWS Secrets Manager.
+        Store OAuth tokens in database.
         
         Args:
             user_id: User ID
             credentials: Google Credentials object
+            db: Database session
         """
-        secret_name = f"{settings.AWS_SECRETS_MANAGER_PREFIX}/gmail-oauth/{user_id}"
+        from models.gmail_oauth import GmailOAuth
         
-        secret_data = {
-            "access_token": credentials.token,
-            "refresh_token": credentials.refresh_token,
-            "token_uri": credentials.token_uri,
-            "client_id": credentials.client_id,
-            "client_secret": credentials.client_secret,
-            "scopes": list(credentials.scopes) if credentials.scopes else [],
-            "expiry": credentials.expiry.isoformat() if credentials.expiry else None,
-            "updated_at": datetime.now(timezone.utc).isoformat(),
-        }
+        # Check if record exists
+        stmt = select(GmailOAuth).where(GmailOAuth.user_id == user_id)
+        result = await db.execute(stmt)
+        oauth_record = result.scalar_one_or_none()
         
-        try:
-            # Try to update existing secret
-            self.secrets_client.update_secret(
-                SecretId=secret_name,
-                SecretString=json.dumps(secret_data),
-            )
-            logger.info(f"Updated Gmail OAuth secret for user {user_id}")
-            
-        except ClientError as e:
-            if e.response['Error']['Code'] == 'ResourceNotFoundException':
-                # Create new secret
-                self.secrets_client.create_secret(
-                    Name=secret_name,
-                    SecretString=json.dumps(secret_data),
-                    Description=f"Gmail OAuth tokens for user {user_id}",
+        if oauth_record:
+            # Update existing record
+            stmt = (
+                update(GmailOAuth)
+                .where(GmailOAuth.user_id == user_id)
+                .values(
+                    access_token=credentials.token,
+                    refresh_token=credentials.refresh_token,
+                    token_expiry=credentials.expiry,
+                    scopes=json.dumps(list(credentials.scopes)) if credentials.scopes else None,
+                    updated_at=datetime.now(),
                 )
-                logger.info(f"Created Gmail OAuth secret for user {user_id}")
-            else:
-                raise
+            )
+            await db.execute(stmt)
+        else:
+            # Create new record
+            new_oauth = GmailOAuth(
+                user_id=user_id,
+                access_token=credentials.token,
+                refresh_token=credentials.refresh_token,
+                token_expiry=credentials.expiry,
+                scopes=json.dumps(list(credentials.scopes)) if credentials.scopes else None,
+            )
+            db.add(new_oauth)
+        
+        await db.commit()
+        logger.info(f"Stored Gmail OAuth tokens for user {user_id}")
 
 
 # Global service instance

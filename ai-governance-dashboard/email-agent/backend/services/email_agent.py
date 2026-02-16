@@ -1,7 +1,7 @@
 """
 LangGraph Email Agent Implementation
 """
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage

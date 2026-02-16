@@ -37,13 +37,11 @@ spec:
         - name: POSTGRES_USER
           value: emailagent
         - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: email-agent-secrets
-              key: POSTGRES_PASSWORD
+          value: "emailagent_password_2024"
         volumeMounts:
         - name: postgres-storage
           mountPath: /var/lib/postgresql/data
+          subPath: pgdata
         resources:
           requests:
             memory: "256Mi"

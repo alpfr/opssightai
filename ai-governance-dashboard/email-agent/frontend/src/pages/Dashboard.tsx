@@ -24,6 +24,8 @@ export const Dashboard: React.FC = () => {
       setGmailConnected(status.connected);
     } catch (error) {
       console.error('Failed to check Gmail status:', error);
+      // Default to not connected on error
+      setGmailConnected(false);
     } finally {
       setIsLoading(false);
     }
@@ -55,6 +57,18 @@ export const Dashboard: React.FC = () => {
               <p className="text-sm text-gray-600">Welcome, {user?.full_name || user?.email}</p>
             </div>
             <div className="flex items-center space-x-4">
+              <a
+                href="/about"
+                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600"
+              >
+                About
+              </a>
+              <a
+                href="/how-to-use"
+                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600"
+              >
+                How to Use
+              </a>
               <GmailConnect 
                 isConnected={gmailConnected} 
                 onStatusChange={setGmailConnected}

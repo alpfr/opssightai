@@ -28,12 +28,13 @@ class GmailAPIService:
         self.max_retries = 3
         self.base_backoff = 1  # seconds
     
-    async def _get_service(self, user_id: str):
+    async def _get_service(self, user_id: str, db):
         """
         Get authenticated Gmail API service for user.
         
         Args:
             user_id: User ID
+            db: Database session
             
         Returns:
             Gmail API service instance
@@ -41,7 +42,7 @@ class GmailAPIService:
         Raises:
             GmailAPIError: If credentials not found or invalid
         """
-        credentials = await gmail_oauth_service.get_credentials(user_id)
+        credentials = await gmail_oauth_service.get_credentials(user_id, db)
         
         if not credentials:
             raise GmailAPIError("Gmail not connected. Please authorize access first.")
@@ -107,6 +108,7 @@ class GmailAPIService:
     async def search_emails(
         self,
         user_id: str,
+        db,
         query: str = "",
         max_results: int = 100,
         page_token: Optional[str] = None,
@@ -116,6 +118,7 @@ class GmailAPIService:
         
         Args:
             user_id: User ID
+            db: Database session
             query: Gmail search query (e.g., "from:example@gmail.com subject:hello")
             max_results: Maximum number of results to return
             page_token: Token for pagination
@@ -131,7 +134,7 @@ class GmailAPIService:
             - "after:2024/01/01"
         """
         try:
-            service = await self._get_service(user_id)
+            service = await self._get_service(user_id, db)
             
             params = {
                 'userId': 'me',
@@ -168,6 +171,7 @@ class GmailAPIService:
         self,
         user_id: str,
         email_id: str,
+        db,
         format: str = 'full',
     ) -> Dict:
         """
@@ -176,13 +180,14 @@ class GmailAPIService:
         Args:
             user_id: User ID
             email_id: Gmail message ID
+            db: Database session
             format: Response format ('full', 'metadata', 'minimal', 'raw')
             
         Returns:
             Email message details
         """
         try:
-            service = await self._get_service(user_id)
+            service = await self._get_service(user_id, db)
             
             message = await self._execute_with_retry(
                 service.users().messages().get,
@@ -205,6 +210,7 @@ class GmailAPIService:
         self,
         user_id: str,
         thread_id: str,
+        db,
     ) -> Dict:
         """
         Get email thread with all messages.
@@ -212,12 +218,13 @@ class GmailAPIService:
         Args:
             user_id: User ID
             thread_id: Gmail thread ID
+            db: Database session
             
         Returns:
             Thread with all messages in chronological order
         """
         try:
-            service = await self._get_service(user_id)
+            service = await self._get_service(user_id, db)
             
             thread = await self._execute_with_retry(
                 service.users().threads().get,
@@ -241,6 +248,7 @@ class GmailAPIService:
         to: List[str],
         subject: str,
         body: str,
+        db,
         cc: Optional[List[str]] = None,
         bcc: Optional[List[str]] = None,
         html: bool = False,
@@ -253,6 +261,7 @@ class GmailAPIService:
             to: List of recipient email addresses
             subject: Email subject
             body: Email body (plain text or HTML)
+            db: Database session
             cc: List of CC recipients
             bcc: List of BCC recipients
             html: Whether body is HTML
@@ -261,7 +270,7 @@ class GmailAPIService:
             Sent message details
         """
         try:
-            service = await self._get_service(user_id)
+            service = await self._get_service(user_id, db)
             
             # Create message
             if html:
@@ -304,6 +313,7 @@ class GmailAPIService:
         to: List[str],
         subject: str,
         body: str,
+        db,
         cc: Optional[List[str]] = None,
         bcc: Optional[List[str]] = None,
         html: bool = False,
@@ -316,6 +326,7 @@ class GmailAPIService:
             to: List of recipient email addresses
             subject: Email subject
             body: Email body (plain text or HTML)
+            db: Database session
             cc: List of CC recipients
             bcc: List of BCC recipients
             html: Whether body is HTML
@@ -324,7 +335,7 @@ class GmailAPIService:
             Draft details
         """
         try:
-            service = await self._get_service(user_id)
+            service = await self._get_service(user_id, db)
             
             # Create message
             if html:
@@ -368,6 +379,7 @@ class GmailAPIService:
         to: List[str],
         subject: str,
         body: str,
+        db,
         cc: Optional[List[str]] = None,
         bcc: Optional[List[str]] = None,
         html: bool = False,
@@ -381,6 +393,7 @@ class GmailAPIService:
             to: List of recipient email addresses
             subject: Email subject
             body: Email body (plain text or HTML)
+            db: Database session
             cc: List of CC recipients
             bcc: List of BCC recipients
             html: Whether body is HTML
@@ -389,7 +402,7 @@ class GmailAPIService:
             Updated draft details
         """
         try:
-            service = await self._get_service(user_id)
+            service = await self._get_service(user_id, db)
             
             # Create message
             if html:
@@ -431,6 +444,7 @@ class GmailAPIService:
         self,
         user_id: str,
         draft_id: str,
+        db,
     ) -> bool:
         """
         Delete a draft.
@@ -438,12 +452,13 @@ class GmailAPIService:
         Args:
             user_id: User ID
             draft_id: Draft ID to delete
+            db: Database session
             
         Returns:
             True if successful
         """
         try:
-            service = await self._get_service(user_id)
+            service = await self._get_service(user_id, db)
             
             await self._execute_with_retry(
                 service.users().drafts().delete,
@@ -466,6 +481,7 @@ class GmailAPIService:
         user_id: str,
         email_id: str,
         label_ids: List[str],
+        db,
     ) -> Dict:
         """
         Add labels to an email.
@@ -474,12 +490,13 @@ class GmailAPIService:
             user_id: User ID
             email_id: Email message ID
             label_ids: List of label IDs to add
+            db: Database session
             
         Returns:
             Updated message details
         """
         try:
-            service = await self._get_service(user_id)
+            service = await self._get_service(user_id, db)
             
             message = await self._execute_with_retry(
                 service.users().messages().modify,
@@ -503,6 +520,7 @@ class GmailAPIService:
         user_id: str,
         email_id: str,
         label_ids: List[str],
+        db,
     ) -> Dict:
         """
         Remove labels from an email.
@@ -511,12 +529,13 @@ class GmailAPIService:
             user_id: User ID
             email_id: Email message ID
             label_ids: List of label IDs to remove
+            db: Database session
             
         Returns:
             Updated message details
         """
         try:
-            service = await self._get_service(user_id)
+            service = await self._get_service(user_id, db)
             
             message = await self._execute_with_retry(
                 service.users().messages().modify,
@@ -538,18 +557,20 @@ class GmailAPIService:
     async def get_labels(
         self,
         user_id: str,
+        db,
     ) -> List[Dict]:
         """
         Get all labels for user.
         
         Args:
             user_id: User ID
+            db: Database session
             
         Returns:
             List of label details
         """
         try:
-            service = await self._get_service(user_id)
+            service = await self._get_service(user_id, db)
             
             result = await self._execute_with_retry(
                 service.users().labels().list,

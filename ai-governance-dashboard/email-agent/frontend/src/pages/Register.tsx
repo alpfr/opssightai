@@ -71,6 +71,15 @@ export const Register: React.FC = () => {
           <p className="mt-2 text-center text-sm text-gray-600">
             Join Email Agent Platform
           </p>
+          <div className="mt-4 flex justify-center space-x-4">
+            <Link to="/about" className="text-sm text-indigo-600 hover:text-indigo-500">
+              About
+            </Link>
+            <span className="text-gray-300">|</span>
+            <Link to="/how-to-use" className="text-sm text-indigo-600 hover:text-indigo-500">
+              How to Use
+            </Link>
+          </div>
         </div>
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -80,9 +89,9 @@ export const Register: React.FC = () => {
             </div>
           )}
           
-          <div className="rounded-md shadow-sm space-y-4">
+          <div className="space-y-4">
             <div>
-              <label htmlFor="fullName" className="sr-only">
+              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
                 Full Name
               </label>
               <input
@@ -90,15 +99,15 @@ export const Register: React.FC = () => {
                 name="fullName"
                 type="text"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Full Name"
+                className="appearance-none block w-full px-4 py-3 border-2 border-gray-300 placeholder-gray-400 text-gray-900 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-base"
+                placeholder="Enter your full name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
             </div>
             
             <div>
-              <label htmlFor="email" className="sr-only">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email address
               </label>
               <input
@@ -107,15 +116,15 @@ export const Register: React.FC = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                className="appearance-none block w-full px-4 py-3 border-2 border-gray-300 placeholder-gray-400 text-gray-900 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-base"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             
             <div>
-              <label htmlFor="password" className="sr-only">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
               <input
@@ -124,15 +133,15 @@ export const Register: React.FC = () => {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                className="appearance-none block w-full px-4 py-3 border-2 border-gray-300 placeholder-gray-400 text-gray-900 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-base"
+                placeholder="Create a password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             
             <div>
-              <label htmlFor="confirmPassword" className="sr-only">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                 Confirm Password
               </label>
               <input
@@ -141,8 +150,8 @@ export const Register: React.FC = () => {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm Password"
+                className="appearance-none block w-full px-4 py-3 border-2 border-gray-300 placeholder-gray-400 text-gray-900 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-base"
+                placeholder="Confirm your password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />

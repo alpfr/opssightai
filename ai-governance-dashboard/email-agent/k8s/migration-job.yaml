@@ -1,0 +1,61 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: email-agent-migration-002
+  namespace: email-agent
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: migration
+        image: 713220200108.dkr.ecr.us-east-1.amazonaws.com/email-agent-backend:latest
+        command: ["alembic", "upgrade", "head"]
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://emailagent:emailagent_password_2024@postgres:5432/emailagent"
+        - name: REDIS_URL
+          value: "redis://redis:6379/0"
+        - name: AWS_REGION
+          value: "us-east-1"
+        - name: AWS_ACCOUNT_ID
+          value: "713220200108"
+        - name: CELERY_BROKER_URL
+          value: "redis://redis:6379/1"
+        - name: CELERY_RESULT_BACKEND
+          value: "redis://redis:6379/2"
+        - name: S3_BUCKET_NAME
+          value: "email-agent-attachments"
+        - name: COGNITO_USER_POOL_ID
+          valueFrom:
+            secretKeyRef:
+              name: email-agent-secrets
+              key: COGNITO_USER_POOL_ID
+        - name: COGNITO_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: email-agent-secrets
+              key: COGNITO_CLIENT_ID
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: email-agent-secrets
+              key: JWT_SECRET_KEY
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: email-agent-secrets
+              key: ANTHROPIC_API_KEY
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: email-agent-secrets
+              key: GOOGLE_CLIENT_ID
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: email-agent-secrets
+              key: GOOGLE_CLIENT_SECRET
+        - name: GOOGLE_REDIRECT_URI
+          value: "https://emailaipulse.opssightai.com/api/v1/gmail/oauth/callback"
+  backoffLimit: 3

@@ -27,7 +27,7 @@ class APIKey(Base):
 
     # Indexes
     __table_args__ = (
-        Index("idx_user_id", "user_id"),
+        Index("idx_api_keys_user_id", "user_id"),
     )
 
     def __repr__(self):

@@ -64,7 +64,7 @@ async def oauth_callback(
 ):
     """
     Handle OAuth callback from Google.
-    Exchange authorization code for tokens and store in Secrets Manager.
+    Exchange authorization code for tokens and store in database.
     
     Args:
         code: Authorization code from Google
@@ -78,7 +78,7 @@ async def oauth_callback(
     
     try:
         # Exchange code for tokens
-        token_info = await gmail_oauth_service.exchange_code_for_tokens(code, user_id)
+        token_info = await gmail_oauth_service.exchange_code_for_tokens(code, user_id, db)
         
         # Update database with connection status
         from sqlalchemy import select, update
@@ -96,8 +96,8 @@ async def oauth_callback(
                 .values(
                     is_connected=True,
                     email=token_info.get('email', 'unknown@gmail.com'),
-                    connected_at=datetime.now(timezone.utc),
-                    updated_at=datetime.now(timezone.utc),
+                    connected_at=datetime.now(),
+                    updated_at=datetime.now(),
                 )
             )
             await db.execute(stmt)
@@ -107,7 +107,7 @@ async def oauth_callback(
                 user_id=user_id,
                 is_connected=True,
                 email=token_info.get('email', 'unknown@gmail.com'),
-                connected_at=datetime.now(timezone.utc),
+                connected_at=datetime.now(),
             )
             db.add(gmail_oauth)
         
@@ -144,8 +144,8 @@ async def disconnect_gmail(
     user_id = current_user['user_id']
     
     try:
-        # Revoke tokens from Google and Secrets Manager
-        success = await gmail_oauth_service.revoke_tokens(user_id)
+        # Revoke tokens from Google and database
+        success = await gmail_oauth_service.revoke_tokens(user_id, db)
         
         if not success:
             raise HTTPException(
@@ -159,8 +159,8 @@ async def disconnect_gmail(
             .where(GmailOAuth.user_id == user_id)
             .values(
                 is_connected=False,
-                disconnected_at=datetime.now(timezone.utc),
-                updated_at=datetime.now(timezone.utc),
+                disconnected_at=datetime.now(),
+                updated_at=datetime.now(),
             )
         )
         await db.execute(stmt)

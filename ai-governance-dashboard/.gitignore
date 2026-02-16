@@ -127,4 +127,4 @@ coverage/
 
 # Temporary files
 tmp/
-temp/
+temp/email-agent/k8s/secret.yaml

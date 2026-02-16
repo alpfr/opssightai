@@ -32,7 +32,20 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
-        if (error.response?.status === 401) {
+        const originalRequest = error.config as any;
+        
+        // Check if this is a 401 and we haven't already retried
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          
+          // Don't retry if this is the refresh endpoint itself
+          if (originalRequest.url?.includes('/auth/refresh')) {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            window.location.href = '/login';
+            return Promise.reject(error);
+          }
+          
           // Token expired, try to refresh
           const refreshToken = localStorage.getItem('refresh_token');
           if (refreshToken) {
@@ -40,10 +53,10 @@ class ApiClient {
               const response = await this.refreshToken(refreshToken);
               localStorage.setItem('access_token', response.access_token);
               
-              // Retry original request
-              if (error.config) {
-                error.config.headers.Authorization = `Bearer ${response.access_token}`;
-                return this.client.request(error.config);
+              // Retry original request with new token
+              if (originalRequest) {
+                originalRequest.headers.Authorization = `Bearer ${response.access_token}`;
+                return this.client.request(originalRequest);
               }
             } catch (refreshError) {
               // Refresh failed, logout

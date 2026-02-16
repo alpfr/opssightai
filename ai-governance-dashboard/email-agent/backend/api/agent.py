@@ -112,14 +112,14 @@ async def chat_with_agent(
         conversation_history.append({
             "role": "user",
             "content": request.message,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now().isoformat(),
         })
         
         # Add agent response
         conversation_history.append({
             "role": "assistant",
             "content": agent_response["response"],
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now().isoformat(),
         })
         
         # Save to database
@@ -132,7 +132,7 @@ async def chat_with_agent(
         if existing_conversation:
             # Update existing
             existing_conversation.messages = conversation_history
-            existing_conversation.updated_at = datetime.now(timezone.utc)
+            existing_conversation.updated_at = datetime.now()
         else:
             # Create new
             new_conversation = AgentConversation(

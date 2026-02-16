@@ -7,6 +7,7 @@ from typing import List, Optional
 
 from services.gmail_api import gmail_api_service, GmailAPIError
 from utils.auth_middleware import get_current_user
+from utils.database import get_db
 from utils.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -78,6 +79,7 @@ async def search_emails(
     max_results: int = Query(100, ge=1, le=500, description="Maximum results to return"),
     page_token: Optional[str] = Query(None, description="Pagination token"),
     current_user: dict = Depends(get_current_user),
+    db = Depends(get_db),
 ):
     """
     Search emails using Gmail query syntax.
@@ -94,6 +96,7 @@ async def search_emails(
     try:
         result = await gmail_api_service.search_emails(
             user_id=user_id,
+            db=db,
             query=query,
             max_results=max_results,
             page_token=page_token,
@@ -118,6 +121,7 @@ async def get_email(
     email_id: str,
     format: str = Query("full", description="Response format: full, metadata, minimal, raw"),
     current_user: dict = Depends(get_current_user),
+    db = Depends(get_db),
 ):
     """
     Get full email details by ID.
@@ -128,6 +132,7 @@ async def get_email(
         email = await gmail_api_service.get_email(
             user_id=user_id,
             email_id=email_id,
+            db=db,
             format=format,
         )
         
@@ -145,6 +150,7 @@ async def get_email(
 async def get_email_thread(
     email_id: str,
     current_user: dict = Depends(get_current_user),
+    db = Depends(get_db),
 ):
     """
     Get email thread (conversation) containing the specified email.
@@ -156,6 +162,7 @@ async def get_email_thread(
         email = await gmail_api_service.get_email(
             user_id=user_id,
             email_id=email_id,
+            db=db,
             format='metadata',
         )
         
@@ -167,6 +174,7 @@ async def get_email_thread(
         thread = await gmail_api_service.get_thread(
             user_id=user_id,
             thread_id=thread_id,
+            db=db,
         )
         
         return thread
@@ -187,6 +195,7 @@ async def get_email_thread(
 async def send_email(
     request: SendEmailRequest,
     current_user: dict = Depends(get_current_user),
+    db = Depends(get_db),
 ):
     """
     Send an email.
@@ -199,6 +208,7 @@ async def send_email(
             to=request.to,
             subject=request.subject,
             body=request.body,
+            db=db,
             cc=request.cc,
             bcc=request.bcc,
             html=request.html,
@@ -227,6 +237,7 @@ async def send_email(
 async def create_draft(
     request: CreateDraftRequest,
     current_user: dict = Depends(get_current_user),
+    db = Depends(get_db),
 ):
     """
     Create an email draft.
@@ -239,6 +250,7 @@ async def create_draft(
             to=request.to,
             subject=request.subject,
             body=request.body,
+            db=db,
             cc=request.cc,
             bcc=request.bcc,
             html=request.html,
@@ -266,6 +278,7 @@ async def update_draft(
     draft_id: str,
     request: UpdateDraftRequest,
     current_user: dict = Depends(get_current_user),
+    db = Depends(get_db),
 ):
     """
     Update an existing draft.
@@ -279,6 +292,7 @@ async def update_draft(
             to=request.to,
             subject=request.subject,
             body=request.body,
+            db=db,
             cc=request.cc,
             bcc=request.bcc,
             html=request.html,
@@ -305,6 +319,7 @@ async def update_draft(
 async def delete_draft(
     draft_id: str,
     current_user: dict = Depends(get_current_user),
+    db = Depends(get_db),
 ):
     """
     Delete a draft.
@@ -315,6 +330,7 @@ async def delete_draft(
         await gmail_api_service.delete_draft(
             user_id=user_id,
             draft_id=draft_id,
+            db=db,
         )
         
         logger.info(f"Draft {draft_id} deleted successfully for user {user_id}")
@@ -339,6 +355,7 @@ async def add_labels_to_email(
     email_id: str,
     request: AddLabelsRequest,
     current_user: dict = Depends(get_current_user),
+    db = Depends(get_db),
 ):
     """
     Add labels to an email.
@@ -350,6 +367,7 @@ async def add_labels_to_email(
             user_id=user_id,
             email_id=email_id,
             label_ids=request.label_ids,
+            db=db,
         )
         
         logger.info(f"Labels added to email {email_id} for user {user_id}")
@@ -373,6 +391,7 @@ async def remove_labels_from_email(
     email_id: str,
     request: RemoveLabelsRequest,
     current_user: dict = Depends(get_current_user),
+    db = Depends(get_db),
 ):
     """
     Remove labels from an email.
@@ -384,6 +403,7 @@ async def remove_labels_from_email(
             user_id=user_id,
             email_id=email_id,
             label_ids=request.label_ids,
+            db=db,
         )
         
         logger.info(f"Labels removed from email {email_id} for user {user_id}")
@@ -405,6 +425,7 @@ async def remove_labels_from_email(
 @router.get("/labels/list")
 async def list_labels(
     current_user: dict = Depends(get_current_user),
+    db = Depends(get_db),
 ):
     """
     Get all labels for the user.
@@ -412,7 +433,7 @@ async def list_labels(
     user_id = current_user['user_id']
     
     try:
-        labels = await gmail_api_service.get_labels(user_id=user_id)
+        labels = await gmail_api_service.get_labels(user_id=user_id, db=db)
         
         return {
             "labels": labels,

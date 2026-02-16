@@ -26,7 +26,7 @@ class Session(Base):
 
     # Indexes
     __table_args__ = (
-        Index("idx_user_id", "user_id"),
+        Index("idx_sessions_user_id", "user_id"),
         Index("idx_expires_at", "expires_at"),
     )
 

@@ -274,7 +274,7 @@ class CognitoAuthService:
         Verify JWT token and extract claims.
         
         Args:
-            token: JWT access token
+            token: JWT access token or ID token
             
         Returns:
             Dict with user claims (sub, email, cognito:groups, etc.)
@@ -286,14 +286,30 @@ class CognitoAuthService:
             # Get signing key from JWKS
             signing_key = self.jwks_client.get_signing_key_from_jwt(token)
             
+            # Decode token header to check token type
+            unverified_header = jwt.get_unverified_header(token)
+            unverified_claims = jwt.decode(token, options={"verify_signature": False})
+            
+            # Check if this is an access token or ID token
+            token_use = unverified_claims.get('token_use', 'access')
+            
             # Verify and decode token
-            claims = jwt.decode(
-                token,
-                signing_key.key,
-                algorithms=["RS256"],
-                audience=self.client_id,
-                options={"verify_exp": True}
-            )
+            # Access tokens don't have 'aud' claim, ID tokens do
+            if token_use == 'id':
+                claims = jwt.decode(
+                    token,
+                    signing_key.key,
+                    algorithms=["RS256"],
+                    audience=self.client_id,
+                    options={"verify_exp": True}
+                )
+            else:  # access token
+                claims = jwt.decode(
+                    token,
+                    signing_key.key,
+                    algorithms=["RS256"],
+                    options={"verify_exp": True, "verify_aud": False}
+                )
             
             return claims
             
