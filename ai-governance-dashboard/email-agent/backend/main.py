@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from api.routes import api_router
 from utils.config import settings
 from utils.logging_config import setup_logging
+from utils.redis_client import close_redis
 
 # Setup logging
 setup_logging()
@@ -23,6 +24,7 @@ async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.APP_NAME} in {settings.APP_ENV} mode")
     yield
     logger.info(f"Shutting down {settings.APP_NAME}")
+    await close_redis()
 
 
 # Create FastAPI application
