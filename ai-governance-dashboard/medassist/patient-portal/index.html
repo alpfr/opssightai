@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedAssist - Patient Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            min-height: 100vh;
+            padding: 0;
+            padding-bottom: 80px; /* Space for mobile bottom nav */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            color: #10b981;
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .header-left p {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .patient-info {
+            text-align: right;
+        }
+
+        .patient-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .patient-id {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: none; /* Hidden on mobile, shown on desktop */
+            background: white;
+            padding: 0 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+
+        .tab-nav-list {
+            display: flex;
+            gap: 0;
+            list-style: none;
+        }
+
+        .tab-btn {
+            padding: 16px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: #10b981;
+        }
+
+        .tab-btn.active {
+            color: #10b981;
+            border-bottom-color: #10b981;
+        }
+
+        /* Mobile Bottom Navigation */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 1000;
+        }
+
+        .mobile-nav-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 11px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .mobile-nav-btn.active {
+            color: #10b981;
+        }
+
+        .mobile-nav-icon {
+            font-size: 24px;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .welcome-message {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-message h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .welcome-message p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        /* Health Summary */
+        .health-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .summary-item {
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 12px;
+            border-left: 4px solid #10b981;
+        }
+
+        .summary-label {
+            font-size: 11px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .summary-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* Quick Actions Grid */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .action-btn {
+            padding: 16px;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .action-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .action-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* AI Chat */
+        .ai-chat {
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .message.ai .message-avatar {
+            background: #10b981;
+            color: white;
+        }
+
+        .message.user .message-avatar {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .message-content {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .message.ai .message-content {
+            background: white;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+        }
+
+        .message.user .message-content {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+
+        .btn-send {
+            padding: 12px 24px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-send:hover {
+            background: #059669;
+        }
+
+        /* List Items */
+        .list-item {
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-item-left {
+            flex: 1;
+        }
+
+        .list-item-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .list-item-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .list-item-badge {
+            padding: 4px 12px;
+            background: #10b981;
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            body {
+                padding-bottom: 0;
+            }
+
+            .header {
+                border-radius: 16px;
+                margin: 20px;
+                padding: 30px;
+            }
+
+            .header-left h1 {
+                font-size: 28px;
+            }
+
+            .header-left p {
+                font-size: 14px;
+            }
+
+            .patient-name {
+                font-size: 18px;
+            }
+
+            .patient-id {
+                font-size: 12px;
+            }
+
+            .tab-nav {
+                display: block;
+                margin: 0 20px;
+                border-radius: 0 0 16px 16px;
+            }
+
+            .mobile-nav {
+                display: none;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .health-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .health-summary {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 767px) {
+            .header {
+                border-radius: 0;
+                margin: 0;
+            }
+
+            .tab-content {
+                padding: 16px;
+            }
+
+            .ai-chat {
+                height: calc(100vh - 300px);
+                min-height: 400px;
+            }
+        }
+
+        .welcome-message {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-message h2 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .welcome-message p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <h1>🏥 MedAssist</h1>
+            <p>Your health, powered by AI</p>
+        </div>
+        <div class="patient-info">
+            <div class="patient-name" id="patientName">John Doe</div>
+            <div class="patient-id" id="patientId">UPI-XXXXXXXX</div>
+        </div>
+    </div>
+
+    <!-- Desktop Tab Navigation -->
+    <div class="tab-nav">
+        <ul class="tab-nav-list">
+            <li><button class="tab-btn active" onclick="switchTab('home')">🏠 Home</button></li>
+            <li><button class="tab-btn" onclick="switchTab('ai')">🤖 AI Assistant</button></li>
+            <li><button class="tab-btn" onclick="switchTab('appointments')">📅 Appointments</button></li>
+            <li><button class="tab-btn" onclick="switchTab('medications')">💊 Medications</button></li>
+            <li><button class="tab-btn" onclick="switchTab('records')">📋 Records</button></li>
+            <li><button class="tab-btn" onclick="switchTab('profile')">👤 Profile</button></li>
+            <li><button class="tab-btn" onclick="switchTab('about')">ℹ️ About</button></li>
+        </ul>
+    </div>
+
+    <!-- Tab Content Container -->
+    <div class="container">
+        <!-- Home Tab -->
+        <div id="home-tab" class="tab-content active">
+            <div class="welcome-message">
+                <h2>👋 Welcome back!</h2>
+                <p>Your AI health assistant is ready to help. Ask questions, check symptoms, or manage your health.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📊 Health Summary</div>
+                <div class="health-summary">
+                    <div class="summary-item">
+                        <div class="summary-label">Last Visit</div>
+                        <div class="summary-value">2 weeks ago</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Next Appointment</div>
+                        <div class="summary-value">In 3 days</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Active Medications</div>
+                        <div class="summary-value">2 prescriptions</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Health Score</div>
+                        <div class="summary-value">85/100 ✨</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">⚡ Quick Actions</div>
+                <div class="quick-actions">
+                    <div class="action-btn" onclick="refillPrescription()">
+                        <div class="action-icon">💊</div>
+                        <div class="action-title">Refill Rx</div>
+                    </div>
+                    <div class="action-btn" onclick="switchTab('appointments')">
+                        <div class="action-icon">📅</div>
+                        <div class="action-title">Book Appointment</div>
+                    </div>
+                    <div class="action-btn" onclick="downloadRecords()">
+                        <div class="action-icon">📄</div>
+                        <div class="action-title">Download Records</div>
+                    </div>
+                    <div class="action-btn" onclick="findProvider()">
+                        <div class="action-icon">🔍</div>
+                        <div class="action-title">Find Provider</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Assistant Tab -->
+        <div id="ai-tab" class="tab-content">
+            <div class="card">
+                <div class="card-title">🤖 AI Health Assistant</div>
+                <div class="ai-chat">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai">
+                            <div class="message-avatar">🤖</div>
+                            <div class="message-content">
+                                Hello! I'm your AI health assistant. I can help you with:
+                                <br><br>
+                                • Symptom checking and health questions
+                                <br>• Understanding your medical records
+                                <br>• Medication information
+                                <br>• General health advice
+                                <br><br>
+                                How can I help you today?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input 
+                            type="text" 
+                            class="chat-input" 
+                            id="chatInput" 
+                            placeholder="Ask me anything about your health..."
+                            onkeypress="handleKeyPress(event)"
+                        >
+                        <button class="btn-send" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments Tab -->
+        <div id="appointments-tab" class="tab-content">
+            <div class="card">
+                <div class="card-title">📅 Upcoming Appointments</div>
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <div class="list-item-title">Dr. Sarah Johnson</div>
+                        <div class="list-item-subtitle">Annual Checkup • Thursday, 2:00 PM</div>
+                    </div>
+                    <div class="list-item-badge">In 3 days</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <div class="list-item-title">Dr. Michael Chen</div>
+                        <div class="list-item-subtitle">Follow-up • Next Monday, 10:00 AM</div>
+                    </div>
+                    <div class="list-item-badge">In 10 days</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📆 Schedule New Appointment</div>
+                <div class="quick-actions">
+                    <div class="action-btn" onclick="scheduleAppointment('primary')">
+                        <div class="action-icon">👨‍⚕️</div>
+                        <div class="action-title">Primary Care</div>
+                    </div>
+                    <div class="action-btn" onclick="scheduleAppointment('specialist')">
+                        <div class="action-icon">🩺</div>
+                        <div class="action-title">Specialist</div>
+                    </div>
+                    <div class="action-btn" onclick="scheduleAppointment('urgent')">
+                        <div class="action-icon">🚑</div>
+                        <div class="action-title">Urgent Care</div>
+                    </div>
+                    <div class="action-btn" onclick="scheduleAppointment('telehealth')">
+                        <div class="action-icon">💻</div>
+                        <div class="action-title">Telehealth</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medications Tab -->
+        <div id="medications-tab" class="tab-content">
+            <div class="card">
+                <div class="card-title">💊 Active Medications</div>
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <div class="list-item-title">Lisinopril 10mg</div>
+                        <div class="list-item-subtitle">Take once daily • 2 refills remaining</div>
+                    </div>
+                    <div class="list-item-badge">Active</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <div class="list-item-title">Metformin 500mg</div>
+                        <div class="list-item-subtitle">Take twice daily • 1 refill remaining</div>
+                    </div>
+                    <div class="list-item-badge">Active</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">⚡ Medication Actions</div>
+                <div class="quick-actions">
+                    <div class="action-btn" onclick="refillPrescription()">
+                        <div class="action-icon">🔄</div>
+                        <div class="action-title">Request Refill</div>
+                    </div>
+                    <div class="action-btn" onclick="viewMedicationHistory()">
+                        <div class="action-icon">📜</div>
+                        <div class="action-title">View History</div>
+                    </div>
+                    <div class="action-btn" onclick="checkInteractions()">
+                        <div class="action-icon">⚠️</div>
+                        <div class="action-title">Check Interactions</div>
+                    </div>
+                    <div class="action-btn" onclick="setReminder()">
+                        <div class="action-icon">⏰</div>
+                        <div class="action-title">Set Reminder</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Records Tab -->
+        <div id="records-tab" class="tab-content">
+            <div class="card">
+                <div class="card-title">📋 Medical Records</div>
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <div class="list-item-title">Annual Physical Exam</div>
+                        <div class="list-item-subtitle">Dr. Sarah Johnson • 2 weeks ago</div>
+                    </div>
+                    <div class="list-item-badge">View</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <div class="list-item-title">Blood Work Results</div>
+                        <div class="list-item-subtitle">Lab Corp • 3 weeks ago</div>
+                    </div>
+                    <div class="list-item-badge">View</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <div class="list-item-title">X-Ray Imaging</div>
+                        <div class="list-item-subtitle">Radiology Center • 1 month ago</div>
+                    </div>
+                    <div class="list-item-badge">View</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📄 Record Actions</div>
+                <div class="quick-actions">
+                    <div class="action-btn" onclick="downloadRecords()">
+                        <div class="action-icon">⬇️</div>
+                        <div class="action-title">Download All</div>
+                    </div>
+                    <div class="action-btn" onclick="shareRecords()">
+                        <div class="action-icon">📤</div>
+                        <div class="action-title">Share Records</div>
+                    </div>
+                    <div class="action-btn" onclick="requestRecords()">
+                        <div class="action-icon">📥</div>
+                        <div class="action-title">Request Records</div>
+                    </div>
+                    <div class="action-btn" onclick="viewTimeline()">
+                        <div class="action-icon">📊</div>
+                        <div class="action-title">View Timeline</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profile-tab" class="tab-content">
+            <div class="card">
+                <div class="card-title">👤 Personal Information</div>
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <div class="list-item-title">Contact Information</div>
+                        <div class="list-item-subtitle">Phone, email, address</div>
+                    </div>
+                    <div class="list-item-badge">Edit</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <div class="list-item-title">Insurance Information</div>
+                        <div class="list-item-subtitle">Primary & secondary coverage</div>
+                    </div>
+                    <div class="list-item-badge">Edit</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <div class="list-item-title">Emergency Contacts</div>
+                        <div class="list-item-subtitle">2 contacts on file</div>
+                    </div>
+                    <div class="list-item-badge">Edit</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">⚙️ Settings</div>
+                <div class="quick-actions">
+                    <div class="action-btn" onclick="changePassword()">
+                        <div class="action-icon">🔒</div>
+                        <div class="action-title">Change Password</div>
+                    </div>
+                    <div class="action-btn" onclick="notificationSettings()">
+                        <div class="action-icon">🔔</div>
+                        <div class="action-title">Notifications</div>
+                    </div>
+                    <div class="action-btn" onclick="privacySettings()">
+                        <div class="action-icon">🛡️</div>
+                        <div class="action-title">Privacy</div>
+                    </div>
+                    <div class="action-btn" onclick="paymentMethods()">
+                        <div class="action-icon">💳</div>
+                        <div class="action-title">Payment Methods</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">ℹ️ Information</div>
+                <div class="quick-actions">
+                    <div class="action-btn" onclick="switchTab('about')">
+                        <div class="action-icon">📖</div>
+                        <div class="action-title">About MedAssist</div>
+                    </div>
+                    <div class="action-btn" onclick="viewHelp()">
+                        <div class="action-icon">❓</div>
+                        <div class="action-title">Help & Support</div>
+                    </div>
+                    <div class="action-btn" onclick="viewTerms()">
+                        <div class="action-icon">📄</div>
+                        <div class="action-title">Terms & Privacy</div>
+                    </div>
+                    <div class="action-btn" onclick="logout()">
+                        <div class="action-icon">🚪</div>
+                        <div class="action-title">Logout</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Tab -->
+        <div id="about-tab" class="tab-content">
+            <div class="card">
+                <div class="card-title">ℹ️ About MedAssist</div>
+                <div style="line-height: 1.8; color: #4b5563;">
+                    <p style="margin-bottom: 20px; font-size: 16px; font-weight: 600; color: #1f2937;">
+                        Your Health, Powered by AI
+                    </p>
+                    <p style="margin-bottom: 16px;">
+                        MedAssist is a next-generation healthcare platform that combines cutting-edge artificial intelligence with compassionate care to revolutionize how you manage your health.
+                    </p>
+                    <p style="margin-bottom: 16px;">
+                        Our mission is to make quality healthcare accessible, affordable, and personalized for everyone. Whether you need a quick consultation, symptom checking, or ongoing care management, MedAssist is here to support your health journey 24/7.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">✨ Key Features</div>
+                <div style="display: grid; gap: 16px;">
+                    <div style="padding: 16px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 8px;">
+                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 6px;">🤖 AI Health Assistant</div>
+                        <div style="font-size: 14px; color: #6b7280;">Get instant answers to health questions, symptom analysis, and personalized health recommendations powered by advanced AI.</div>
+                    </div>
+                    <div style="padding: 16px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 8px;">
+                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 6px;">👨‍⚕️ Telemedicine Platform</div>
+                        <div style="font-size: 14px; color: #6b7280;">Connect with licensed healthcare providers through secure video consultations from the comfort of your home.</div>
+                    </div>
+                    <div style="padding: 16px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 8px;">
+                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 6px;">📋 Unified Health Records</div>
+                        <div style="font-size: 14px; color: #6b7280;">Access all your medical records, lab results, and prescriptions in one secure, easy-to-use platform.</div>
+                    </div>
+                    <div style="padding: 16px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 8px;">
+                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 6px;">🔒 Privacy & Security</div>
+                        <div style="font-size: 14px; color: #6b7280;">Your health data is protected with bank-level encryption and HIPAA-compliant security measures.</div>
+                    </div>
+                    <div style="padding: 16px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 8px;">
+                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 6px;">💊 Medication Management</div>
+                        <div style="font-size: 14px; color: #6b7280;">Track prescriptions, set reminders, check drug interactions, and request refills with ease.</div>
+                    </div>
+                    <div style="padding: 16px; background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 8px;">
+                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 6px;">🌍 Anonymous Care Options</div>
+                        <div style="font-size: 14px; color: #6b7280;">Access sensitive health services with privacy protection and state-compliant anonymous care options.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🎯 Our Values</div>
+                <div style="display: grid; gap: 12px;">
+                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px;">
+                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">Accessibility</div>
+                        <div style="font-size: 14px; color: #6b7280;">Healthcare should be available to everyone, regardless of location or circumstances.</div>
+                    </div>
+                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px;">
+                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">Innovation</div>
+                        <div style="font-size: 14px; color: #6b7280;">We leverage the latest AI and technology to improve health outcomes and patient experiences.</div>
+                    </div>
+                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px;">
+                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">Privacy</div>
+                        <div style="font-size: 14px; color: #6b7280;">Your health information is yours. We protect it with the highest security standards.</div>
+                    </div>
+                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px;">
+                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">Compassion</div>
+                        <div style="font-size: 14px; color: #6b7280;">Every patient deserves respectful, empathetic care tailored to their unique needs.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📞 Contact & Support</div>
+                <div style="display: grid; gap: 12px;">
+                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px; display: flex; align-items: center; gap: 12px;">
+                        <div style="font-size: 24px;">📧</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1f2937; font-size: 14px;">Email Support</div>
+                            <div style="font-size: 13px; color: #6b7280;">support@medassist.health</div>
+                        </div>
+                    </div>
+                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px; display: flex; align-items: center; gap: 12px;">
+                        <div style="font-size: 24px;">📱</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1f2937; font-size: 14px;">24/7 Helpline</div>
+                            <div style="font-size: 13px; color: #6b7280;">1-800-MEDASSIST</div>
+                        </div>
+                    </div>
+                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px; display: flex; align-items: center; gap: 12px;">
+                        <div style="font-size: 24px;">💬</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1f2937; font-size: 14px;">Live Chat</div>
+                            <div style="font-size: 13px; color: #6b7280;">Available in the AI Assistant tab</div>
+                        </div>
+                    </div>
+                    <div style="padding: 12px; background: #f9fafb; border-radius: 8px; display: flex; align-items: center; gap: 12px;">
+                        <div style="font-size: 24px;">🌐</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1f2937; font-size: 14px;">Website</div>
+                            <div style="font-size: 13px; color: #6b7280;">www.medassist.health</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 14px; color: #6b7280; margin-bottom: 12px;">
+                        MedAssist Platform v1.0.0
+                    </div>
+                    <div style="font-size: 13px; color: #9ca3af;">
+                        © 2026 MedAssist Health Technologies. All rights reserved.
+                    </div>
+                    <div style="margin-top: 16px; display: flex; justify-content: center; gap: 20px; font-size: 13px;">
+                        <a href="#" style="color: #10b981; text-decoration: none;">Privacy Policy</a>
+                        <a href="#" style="color: #10b981; text-decoration: none;">Terms of Service</a>
+                        <a href="#" style="color: #10b981; text-decoration: none;">HIPAA Notice</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="mobile-nav">
+        <button class="mobile-nav-btn active" onclick="switchTab('home')">
+            <div class="mobile-nav-icon">🏠</div>
+            <div>Home</div>
+        </button>
+        <button class="mobile-nav-btn" onclick="switchTab('ai')">
+            <div class="mobile-nav-icon">🤖</div>
+            <div>AI</div>
+        </button>
+        <button class="mobile-nav-btn" onclick="switchTab('appointments')">
+            <div class="mobile-nav-icon">📅</div>
+            <div>Appts</div>
+        </button>
+        <button class="mobile-nav-btn" onclick="switchTab('medications')">
+            <div class="mobile-nav-icon">💊</div>
+            <div>Meds</div>
+        </button>
+        <button class="mobile-nav-btn" onclick="switchTab('records')">
+            <div class="mobile-nav-icon">📋</div>
+            <div>Records</div>
+        </button>
+        <button class="mobile-nav-btn" onclick="switchTab('profile')">
+            <div class="mobile-nav-icon">👤</div>
+            <div>More</div>
+        </button>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8001';
+        let currentPatient = null;
+
+        // Load patient data
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadPatientData();
+        });
+
+        async function loadPatientData() {
+            try {
+                const response = await fetch(`${API_URL}/patients`);
+                const patients = await response.json();
+                
+                if (patients.length > 0) {
+                    currentPatient = patients[0]; // Use first patient for demo
+                    document.getElementById('patientName').textContent = 
+                        `${currentPatient.first_name} ${currentPatient.last_name}`;
+                    document.getElementById('patientId').textContent = currentPatient.upi;
+                }
+            } catch (error) {
+                console.error('Failed to load patient data:', error);
+            }
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active state from all buttons
+            document.querySelectorAll('.tab-btn, .mobile-nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Add active state to clicked buttons
+            document.querySelectorAll(`.tab-btn, .mobile-nav-btn`).forEach(btn => {
+                if (btn.onclick && btn.onclick.toString().includes(`'${tabName}'`)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Chat Functions
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const response = generateAIResponse(message);
+                addMessage(response, 'ai');
+            }, 1000);
+        }
+
+        function addMessage(text, type) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const avatar = type === 'ai' ? '🤖' : '👤';
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">${text}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateAIResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            
+            if (lowerMessage.includes('symptom') || lowerMessage.includes('pain') || lowerMessage.includes('sick')) {
+                return "I understand you're experiencing symptoms. While I can provide general information, it's important to consult with your healthcare provider for proper diagnosis. Would you like me to help you schedule an appointment or provide information about common symptoms?";
+            }
+            
+            if (lowerMessage.includes('appointment') || lowerMessage.includes('schedule')) {
+                return "I can help you schedule an appointment! Your primary care provider is Dr. Sarah Johnson. Would you like to see available time slots for this week?";
+            }
+            
+            if (lowerMessage.includes('medication') || lowerMessage.includes('prescription')) {
+                return "I can see you have 2 active prescriptions. Would you like to:\n• View medication details\n• Request a refill\n• Check for drug interactions\n• Learn about side effects";
+            }
+            
+            if (lowerMessage.includes('record') || lowerMessage.includes('history')) {
+                return "Your medical records are available in the 'Medical Records' section. I can help you understand your recent visits, test results, or diagnoses. What would you like to know?";
+            }
+            
+            if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
+                return "Hello! How can I assist you with your health today?";
+            }
+            
+            return "I'm here to help with your health questions. I can assist with symptom checking, appointment scheduling, medication information, and understanding your medical records. What would you like to know?";
+        }
+
+        // Feature functions
+        function startSymptomCheck() {
+            switchTab('ai');
+            setTimeout(() => {
+                addMessage("I'd like to check my symptoms", 'user');
+                setTimeout(() => {
+                    addMessage("I'll help you check your symptoms. Please describe what you're experiencing, including:\n• What symptoms you have\n• When they started\n• How severe they are\n• Any other relevant details", 'ai');
+                }, 500);
+            }, 300);
+        }
+
+        function scheduleAppointment(type) {
+            const typeText = type ? ` (${type})` : '';
+            alert(`📅 Schedule Appointment${typeText}\n\nAvailable times this week:\n• Tomorrow at 2:00 PM\n• Thursday at 10:00 AM\n• Friday at 3:30 PM\n\n(Full scheduling system coming soon)`);
+        }
+
+        function viewMedications() {
+            switchTab('medications');
+        }
+
+        function viewRecords() {
+            switchTab('records');
+        }
+
+        function refillPrescription() {
+            alert('💊 Prescription Refill\n\nRequest refills for:\n• Lisinopril 10mg\n• Metformin 500mg\n\nYour pharmacy: CVS Pharmacy\n\n(Refill system coming soon)');
+        }
+
+        function downloadRecords() {
+            alert('📄 Download Medical Records\n\nAvailable formats:\n• PDF summary\n• Detailed report\n• Lab results\n• Imaging reports\n\n(Download feature coming soon)');
+        }
+
+        function findProvider() {
+            alert('🔍 Find a Provider\n\nSearch for:\n• Primary care physicians\n• Specialists\n• Urgent care\n• Hospitals\n\n(Provider directory coming soon)');
+        }
+
+        function viewMedicationHistory() {
+            alert('📜 Medication History\n\nView your complete medication history including:\n• Past prescriptions\n• Discontinued medications\n• Dosage changes\n• Prescribing physicians\n\n(Full history coming soon)');
+        }
+
+        function checkInteractions() {
+            alert('⚠️ Drug Interactions\n\nNo known interactions found between your current medications.\n\nAlways consult your pharmacist or doctor before taking new medications.\n\n(Full interaction checker coming soon)');
+        }
+
+        function setReminder() {
+            alert('⏰ Medication Reminders\n\nSet reminders for:\n• Daily medication times\n• Refill notifications\n• Appointment reminders\n\n(Reminder system coming soon)');
+        }
+
+        function shareRecords() {
+            alert('📤 Share Medical Records\n\nSecurely share your records with:\n• New healthcare providers\n• Specialists\n• Family members\n• Insurance companies\n\n(Sharing feature coming soon)');
+        }
+
+        function requestRecords() {
+            alert('📥 Request Medical Records\n\nRequest records from:\n• Previous healthcare providers\n• Hospitals\n• Labs and imaging centers\n\n(Request system coming soon)');
+        }
+
+        function viewTimeline() {
+            alert('📊 Health Timeline\n\nView your complete health journey:\n• Visits and procedures\n• Diagnoses and treatments\n• Test results over time\n• Medication changes\n\n(Timeline view coming soon)');
+        }
+
+        function changePassword() {
+            alert('🔒 Change Password\n\nUpdate your account password for security.\n\n(Password change coming soon)');
+        }
+
+        function notificationSettings() {
+            alert('🔔 Notification Settings\n\nManage notifications for:\n• Appointment reminders\n• Medication alerts\n• Test results\n• Messages from providers\n\n(Settings coming soon)');
+        }
+
+        function privacySettings() {
+            alert('🛡️ Privacy Settings\n\nControl your privacy:\n• Who can access your records\n• Data sharing preferences\n• Communication preferences\n\n(Privacy settings coming soon)');
+        }
+
+        function paymentMethods() {
+            alert('💳 Payment Methods\n\nManage payment options:\n• Credit/debit cards\n• Bank accounts\n• Payment plans\n• Billing history\n\n(Payment management coming soon)');
+        }
+
+        function messageProvider() {
+            alert('💬 Message Your Provider\n\nSend secure messages to:\n• Dr. Sarah Johnson\n• Nursing staff\n• Administrative team\n\n(Secure messaging coming soon)');
+        }
+
+        function healthInsights() {
+            alert('📊 Health Insights\n\nAI-powered analytics:\n• Health trends over time\n• Preventive care recommendations\n• Risk assessments\n• Wellness goals\n\n(Full analytics coming soon)');
+        }
+
+        function payBill() {
+            alert('💳 Pay Bill\n\nCurrent balance: $0.00\n\nPayment methods:\n• Credit/Debit card\n• Bank account\n• Payment plan\n\n(Payment system coming soon)');
+        }
+
+        function viewHelp() {
+            alert('❓ Help & Support\n\nGet help with:\n• Using the platform\n• Technical issues\n• Billing questions\n• General inquiries\n\nContact: support@medassist.health\n24/7 Helpline: 1-800-MEDASSIST');
+        }
+
+        function viewTerms() {
+            alert('📄 Terms & Privacy\n\nView our:\n• Terms of Service\n• Privacy Policy\n• HIPAA Notice\n• Cookie Policy\n\n(Legal documents coming soon)');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                alert('👋 Logging out...\n\nThank you for using MedAssist!\n\n(Logout functionality coming soon)');
+            }
+        }
+    </script>
+</body>
+</html>
