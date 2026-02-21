@@ -1,0 +1,281 @@
+.asset-list {
+  padding: 1rem;
+}
+
+.asset-list.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  font-size: 1.2rem;
+  color: #718096;
+}
+
+.list-header {
+  margin-bottom: 2rem;
+}
+
+.list-header h2 {
+  margin: 0;
+  font-size: 2rem;
+  color: #2d3748;
+}
+
+.list-header p {
+  margin: 0.5rem 0 0 0;
+  color: #718096;
+}
+
+.filters {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.filter-group select {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  background: white;
+  cursor: pointer;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.assets-table {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f7fafc;
+}
+
+th {
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+td {
+  padding: 1rem;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+  color: #2d3748;
+}
+
+.asset-name {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.asset-type {
+  text-transform: capitalize;
+}
+
+.risk-score {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.risk-critical {
+  background: #fed7d7;
+  color: #742a2a;
+}
+
+.risk-high {
+  background: #feebc8;
+  color: #7c2d12;
+}
+
+.risk-medium {
+  background: #fefcbf;
+  color: #744210;
+}
+
+.risk-low {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.risk-unknown {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.status-active {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.status-maintenance {
+  background: #feebc8;
+  color: #7c2d12;
+}
+
+.status-offline {
+  background: #fed7d7;
+  color: #742a2a;
+}
+
+.status-decommissioned {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+.btn-view {
+  padding: 0.5rem 1rem;
+  background: #667eea;
+  color: white;
+  text-decoration: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+.btn-view:hover {
+  background: #5a67d8;
+}
+
+/* Search input styles */
+.search-group {
+  flex: 1;
+  min-width: 250px;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 2.5rem 0.5rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.clear-search {
+  position: absolute;
+  right: 0.5rem;
+  top: 2rem;
+  background: none;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+}
+
+.clear-search:hover {
+  color: #4a5568;
+}
+
+/* Maintenance badge styles */
+.maintenance-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.maintenance-overdue {
+  background: #fed7d7;
+  color: #742a2a;
+  animation: pulse 2s infinite;
+}
+
+.maintenance-due-soon {
+  background: #feebc8;
+  color: #7c2d12;
+}
+
+.maintenance-upcoming {
+  background: #bee3f8;
+  color: #2c5282;
+}
+
+.maintenance-none {
+  background: #e2e8f0;
+  color: #718096;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .assets-table {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 800px;
+  }
+}

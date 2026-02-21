@@ -1,0 +1,84 @@
+# OpsSightAI Staging Values
+# Override default values for staging deployment
+
+# Frontend configuration
+frontend:
+  replicaCount: 1
+  
+  image:
+    pullPolicy: Always
+  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  
+  autoscaling:
+    enabled: false
+
+# Backend configuration
+backend:
+  replicaCount: 2
+  
+  image:
+    pullPolicy: Always
+  
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  
+  autoscaling:
+    enabled: false
+
+# Database configuration
+database:
+  persistence:
+    enabled: true
+    size: 10Gi
+  
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
+# Ingress configuration
+ingress:
+  enabled: true
+  
+  hosts:
+    - host: staging.opssightai.yourdomain.com
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: opssightai-frontend
+              port: 80
+        - path: /api
+          pathType: Prefix
+          backend:
+            service:
+              name: opssightai-backend
+              port: 4000
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  enabled: false
+
+# Network Policy
+networkPolicy:
+  enabled: false
+
+# Service Monitor for Prometheus
+serviceMonitor:
+  enabled: false

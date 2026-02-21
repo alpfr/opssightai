@@ -1,0 +1,10 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: opssightai-ssl-cert
+  namespace: opssightai
+spec:
+  domains:
+    - opssightai.com
+    - www.opssightai.com
+    - compliance.opssightai.com
