@@ -1,0 +1,27 @@
+OpsSightAI GKE Deployment Information
+=====================================
+
+Deployment Date: Sat Feb 21 11:08:20 EST 2026
+Project ID: alpfr-splunk-integration
+Cluster Name: opssightai-cluster
+Region: us-central1
+Namespace: opssightai
+
+Application URL: http://
+API URL: http:///api
+
+Cluster Info:
+  kubectl cluster-info
+
+View Resources:
+  kubectl get all -n opssightai
+
+Access Application:
+  kubectl port-forward -n opssightai svc/opssightai-frontend 8080:80
+  Then visit: http://localhost:8080
+
+Delete Deployment:
+  helm uninstall opssightai -n opssightai
+  
+Delete Cluster:
+  gcloud container clusters delete opssightai-cluster --zone=us-central1-a --project=alpfr-splunk-integration

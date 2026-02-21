@@ -12,9 +12,9 @@ function About() {
         <section className="about-section">
           <h2>About OpsSight AI</h2>
           <p>
-            OpsSight AI is an advanced operational risk intelligence platform designed to monitor 
-            electrical and industrial assets in real-time. Using cutting-edge AI and machine learning 
-            algorithms, we help operations teams identify risks, detect anomalies, and prevent failures 
+            OpsSight AI is an advanced operational risk intelligence platform designed to monitor
+            electrical and industrial assets in real-time. Using cutting-edge AI and machine learning
+            algorithms, we help operations teams identify risks, detect anomalies, and prevent failures
             before they occur.
           </p>
         </section>
@@ -22,8 +22,8 @@ function About() {
         <section className="about-section">
           <h2>Our Mission</h2>
           <p>
-            To empower industrial operations teams with intelligent, data-driven insights that enable 
-            proactive maintenance, reduce downtime, and ensure the safety and reliability of critical 
+            To empower industrial operations teams with intelligent, data-driven insights that enable
+            proactive maintenance, reduce downtime, and ensure the safety and reliability of critical
             infrastructure.
           </p>
         </section>
@@ -35,7 +35,7 @@ function About() {
               <div className="feature-icon">📊</div>
               <h3>AI-Powered Risk Scoring</h3>
               <p>
-                Advanced algorithms analyze sensor data to generate real-time risk scores (0-100) 
+                Advanced algorithms analyze sensor data to generate real-time risk scores (0-100)
                 for each asset, with detailed explanations of contributing factors.
               </p>
             </div>
@@ -44,7 +44,7 @@ function About() {
               <div className="feature-icon">🔍</div>
               <h3>Anomaly Detection</h3>
               <p>
-                Statistical methods (Z-score, IQR) automatically detect unusual patterns in asset 
+                Statistical methods (Z-score, IQR) automatically detect unusual patterns in asset
                 behavior, classifying anomalies by severity (low, medium, high, critical).
               </p>
             </div>
@@ -53,7 +53,7 @@ function About() {
               <div className="feature-icon">📈</div>
               <h3>Predictive Forecasting</h3>
               <p>
-                30-day forecasts predict future risk trends and potential failures, enabling 
+                30-day forecasts predict future risk trends and potential failures, enabling
                 proactive maintenance scheduling and resource planning.
               </p>
             </div>
@@ -62,7 +62,7 @@ function About() {
               <div className="feature-icon">📱</div>
               <h3>Real-Time Monitoring</h3>
               <p>
-                Continuous data ingestion from multiple sensor types (temperature, vibration, 
+                Continuous data ingestion from multiple sensor types (temperature, vibration,
                 voltage, current, pressure) with instant risk assessment.
               </p>
             </div>
@@ -71,7 +71,7 @@ function About() {
               <div className="feature-icon">🔔</div>
               <h3>Smart Notifications</h3>
               <p>
-                Multi-channel alerts (in-app, email, SMS) for critical risks and anomalies, 
+                Multi-channel alerts (in-app, email, SMS) for critical risks and anomalies,
                 with customizable preferences and severity thresholds.
               </p>
             </div>
@@ -80,8 +80,35 @@ function About() {
               <div className="feature-icon">📋</div>
               <h3>Executive Summaries</h3>
               <p>
-                Plant-level aggregated reports with AI-generated insights, trending issues, 
+                Plant-level aggregated reports with AI-generated insights, trending issues,
                 and actionable recommendations for decision-makers.
+              </p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icon">📅</div>
+              <h3>Maintenance Management</h3>
+              <p>
+                Comprehensive maintenance scheduling, work order tracking, and technician assignment
+                to streamline operations and reduce unplanned downtime.
+              </p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icon">🔗</div>
+              <h3>Asset Relationships</h3>
+              <p>
+                Hierarchical modeling of parent-child dependencies and asset groups to calculate
+                cascading downstream impacts.
+              </p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icon">🎯</div>
+              <h3>Performance KPIs</h3>
+              <p>
+                Automated formulation of critical metrics including OEE, MTBF, MTTR, and availability
+                percentages based on tracked downtime events.
               </p>
             </div>
           </div>
@@ -130,6 +157,17 @@ function About() {
               </ul>
             </div>
           </div>
+        </section>
+
+        <section className="about-section">
+          <h2>MVP Data Engine</h2>
+          <p>
+            To demonstrate real-world operational intelligence, this platform is powered by the
+            <strong> AI4I 2020 Predictive Maintenance Dataset</strong> from the UCI Machine Learning
+            Repository. The dashboard natively ingests over 50,000 baseline turbomachinery telemetry
+            points (Air Temperature, Process Temperature, Rotational Speed, Torque, and Tool Wear)
+            correlated with 339 ground-truth verified machine failures.
+          </p>
         </section>
 
         <section className="about-section">
@@ -209,7 +247,7 @@ function About() {
         <section className="about-section">
           <h2>Contact & Support</h2>
           <p>
-            For more information about OpsSight AI, technical support, or partnership opportunities, 
+            For more information about OpsSight AI, technical support, or partnership opportunities,
             please contact us:
           </p>
           <div className="contact-info">

@@ -11,7 +11,7 @@ function RiskScoreChart({ data }: RiskScoreChartProps) {
   // Format data for chart
   const chartData = data.map(item => ({
     time: new Date(item.time).toLocaleDateString(),
-    score: item.riskScore,
+    score: typeof item.riskScore === 'string' ? parseFloat(item.riskScore) : item.riskScore,
   })).reverse(); // Reverse to show oldest to newest
 
   return (

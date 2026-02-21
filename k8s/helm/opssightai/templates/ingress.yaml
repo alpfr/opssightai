@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: opssightai-ingress
+  name: opssightai-lb
   namespace: {{ .Values.namespace.name }}
   labels:
     {{- include "opssightai.labels" . | nindent 4 }}

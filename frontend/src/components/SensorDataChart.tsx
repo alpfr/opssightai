@@ -12,20 +12,20 @@ interface SensorDataChartProps {
 function SensorDataChart({ data }: SensorDataChartProps) {
   // Group data by sensor type
   const sensorTypes = Array.from(new Set(data.map(d => d.sensorType)));
-  
+
   // Create time-series data structure
   const timeMap = new Map<string, any>();
-  
+
   data.forEach(item => {
     const time = new Date(item.timestamp).toLocaleString();
     if (!timeMap.has(time)) {
       timeMap.set(time, { time });
     }
-    timeMap.get(time)[item.sensorType] = item.value;
+    timeMap.get(time)[item.sensorType] = typeof item.value === 'string' ? parseFloat(item.value) : item.value;
   });
-  
+
   const chartData = Array.from(timeMap.values()).reverse();
-  
+
   // Colors for different sensor types
   const colors = ['#667eea', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
@@ -38,11 +38,11 @@ function SensorDataChart({ data }: SensorDataChartProps) {
         <Tooltip />
         <Legend />
         {sensorTypes.map((type, index) => (
-          <Line 
+          <Line
             key={type}
-            type="monotone" 
-            dataKey={type} 
-            stroke={colors[index % colors.length]} 
+            type="monotone"
+            dataKey={type}
+            stroke={colors[index % colors.length]}
             strokeWidth={2}
             name={type}
           />

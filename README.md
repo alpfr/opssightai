@@ -56,10 +56,11 @@ OpsSight AI is a production-deployed platform running on Google Kubernetes Engin
 
 ### Data Migration
 - ✅ Complete database schema migrated from local to GKE
-- ✅ 4 assets with full sensor data
-- ✅ 142 sensor readings
-- ✅ 45 risk scores
-- ✅ 8 anomalies detected
+- ✅ 4 core assets with baseline sensor data
+- ✅ **MVP Data Engine**: Fully ingested the Kaggle AI4I 2020 Predictive Maintenance Dataset
+- ✅ 50,000+ real-world turbomachinery telemetry readings (Air Temp, Process Temp, RPM, Torque, Tool Wear)
+- ✅ 339 ground-truth verified machine failure anomalies
+- ✅ 35 days of chronological Risk Score profiling
 - ✅ 3 technicians
 - ✅ 2 maintenance schedules
 
@@ -121,10 +122,11 @@ cd frontend && npm install && npm run dev
 ### Default Test Data
 - **User ID**: `166c97fe-2cd9-4149-bc42-bee305c58037`
 - **Plant ID**: `PLANT-001`
-- **4 Sample Assets**: Transformer, Motor, Generator, Pump
-- **35 Days** of sensor readings
-- **30 Days** of risk score history
-- **6 Anomalies** detected
+- **Core Assets**: Transformer, Motor, Generator, Pump
+- **Kaggle MVP Asset**: AI4I Milling Machine (Powered by UCI Machine Learning Repository)
+- **Time-Series Telemetry**: 50,000+ points over 35 Days
+- **Risk Score History**: 35 Days of continuous simulated failure deterioration
+- **Anomalies**: 339 verified mechanical, thermal, and algorithmic failures
 - **30-Day Forecast** available
 
 ## 📁 Project Structure
@@ -423,10 +425,11 @@ curl -X POST http://localhost:4000/api/anomalies/detect \
 
 ### Sample Data
 
-The database is initialized with 3 sample assets:
+The database is initialized with 4 baseline MVP assets:
 1. **Main Transformer T1** (transformer)
 2. **Motor M1** (motor)
 3. **Generator G1** (generator)
+4. **AI4I Milling Machine** (predictive maintenance simulator powered by the UCI Machine Learning Kaggle 2020 Dataset)
 
 ## 🎨 Dashboard Pages
 

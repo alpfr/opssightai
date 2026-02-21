@@ -107,13 +107,6 @@ echo "  Cluster Name:  $CLUSTER_NAME"
 echo "  Region:        $REGION"
 echo "  Namespace:     $NAMESPACE"
 echo ""
-read -p "Continue with deployment? (y/n) " -n 1 -r
-echo ""
-
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "Deployment cancelled"
-    exit 0
-fi
 
 # Enable required APIs
 print_step "Enabling required GCP APIs..."
@@ -124,16 +117,8 @@ echo -e "${GREEN}✓${NC} APIs enabled"
 
 # Check if cluster exists
 print_step "Checking if cluster exists..."
-if gcloud container clusters describe $CLUSTER_NAME --region=$REGION --project=$PROJECT_ID &>/dev/null; then
-    echo -e "${YELLOW}!${NC} Cluster $CLUSTER_NAME already exists"
-    read -p "Use existing cluster? (y/n) " -n 1 -r
-    echo ""
-    
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        print_error "Please delete the existing cluster or choose a different name"
-        exit 1
-    fi
-    
+if gcloud container clusters describe $CLUSTER_NAME --zone=$ZONE --project=$PROJECT_ID &>/dev/null; then
+    echo -e "${YELLOW}!${NC} Cluster $CLUSTER_NAME already exists, using existing cluster."
     CLUSTER_EXISTS=true
 else
     CLUSTER_EXISTS=false
@@ -144,9 +129,11 @@ if [ "$CLUSTER_EXISTS" = false ]; then
     print_step "Creating GKE cluster (this will take 10-15 minutes)..."
     
     gcloud container clusters create $CLUSTER_NAME \
-        --region=$REGION \
-        --num-nodes=3 \
+        --zone=$ZONE \
+        --num-nodes=2 \
         --machine-type=n1-standard-2 \
+        --disk-type=pd-standard \
+        --disk-size=50 \
         --enable-autoscaling \
         --min-nodes=2 \
         --max-nodes=10 \
@@ -165,7 +152,7 @@ fi
 
 # Get cluster credentials
 print_step "Getting cluster credentials..."
-gcloud container clusters get-credentials $CLUSTER_NAME --region=$REGION --project=$PROJECT_ID
+gcloud container clusters get-credentials $CLUSTER_NAME --zone=$ZONE --project=$PROJECT_ID
 echo -e "${GREEN}✓${NC} Credentials configured"
 
 # Verify cluster connection
@@ -183,11 +170,9 @@ echo -e "${GREEN}✓${NC} Docker configured for GCR"
 print_step "Building and pushing frontend image..."
 cd frontend
 
-docker build -t gcr.io/$PROJECT_ID/opssightai-frontend:latest \
+docker buildx build --platform linux/amd64 -t gcr.io/$PROJECT_ID/opssightai-frontend:latest \
     --build-arg REACT_APP_API_URL=/api \
-    .
-
-docker push gcr.io/$PROJECT_ID/opssightai-frontend:latest
+    --push .
 echo -e "${GREEN}✓${NC} Frontend image pushed to GCR"
 
 cd ..
@@ -196,8 +181,7 @@ cd ..
 print_step "Building and pushing backend image..."
 cd backend
 
-docker build -t gcr.io/$PROJECT_ID/opssightai-backend:latest .
-docker push gcr.io/$PROJECT_ID/opssightai-backend:latest
+docker buildx build --platform linux/amd64 -t gcr.io/$PROJECT_ID/opssightai-backend:latest --push .
 echo -e "${GREEN}✓${NC} Backend image pushed to GCR"
 
 cd ..
@@ -207,19 +191,7 @@ print_step "Creating namespace..."
 kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
 echo -e "${GREEN}✓${NC} Namespace created"
 
-# Create secrets
-print_step "Creating secrets..."
-kubectl create secret generic opssightai-db-secret \
-    --from-literal=postgres-password=$DB_PASSWORD \
-    --namespace=$NAMESPACE \
-    --dry-run=client -o yaml | kubectl apply -f -
 
-kubectl create secret generic opssightai-backend-secret \
-    --from-literal=jwt-secret=$JWT_SECRET \
-    --namespace=$NAMESPACE \
-    --dry-run=client -o yaml | kubectl apply -f -
-
-echo -e "${GREEN}✓${NC} Secrets created"
 
 # Deploy with Helm
 print_step "Deploying OpsSightAI with Helm..."
@@ -231,7 +203,9 @@ helm upgrade --install opssightai ./k8s/helm/opssightai \
     --set backend.image.repository=gcr.io/$PROJECT_ID/opssightai-backend \
     --set backend.image.tag=latest \
     --set database.secrets.postgresPassword=$DB_PASSWORD \
+    --set database.persistence.storageClass=standard \
     --set backend.secrets.jwtSecret=$JWT_SECRET \
+    --set namespace.create=false \
     --set ingress.className=gce \
     --set ingress.annotations."kubernetes\.io/ingress\.class"=gce \
     --wait --timeout=10m
@@ -335,7 +309,7 @@ Delete Deployment:
   helm uninstall opssightai -n $NAMESPACE
   
 Delete Cluster:
-  gcloud container clusters delete $CLUSTER_NAME --region=$REGION --project=$PROJECT_ID
+  gcloud container clusters delete $CLUSTER_NAME --zone=$ZONE --project=$PROJECT_ID
 EOF
 
 echo -e "${GREEN}✓${NC} Deployment info saved to deployment-info.txt"
