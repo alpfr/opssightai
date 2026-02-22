@@ -7,7 +7,7 @@
 
 > AI-powered operational risk intelligence for industrial and electrical assets
 
-OpsSight AI is a production-deployed platform running on Google Kubernetes Engine (GKE) that monitors industrial assets in real-time, providing AI-generated risk scores, anomaly detection, predictive forecasting, and executive insights to help operations teams prevent failures and optimize maintenance.
+OpsSight AI is a production-deployed platform running on Google Kubernetes Engine (GKE) that monitors industrial assets in real-time. It provides AI-generated risk scores, anomaly detection, predictive forecasting, an Agentic AI Operations Assistant (powered by Google Gemini), and executive insights to help operations teams prevent failures and optimize maintenance.
 
 ## 🌐 Live Production Deployment
 
@@ -67,6 +67,7 @@ OpsSight AI is a production-deployed platform running on Google Kubernetes Engin
 ## 🌟 Features
 
 ### ✅ Production Deployed
+- **AI Operations Assistant (Agentic RAG)**: Ask natural language questions about your factory floor data. The Gemini 2.5 Flash agent translates queries into safe SQL to retrieve live telemetry, diagnose asset health, and investigate historical anomalies automatically.
 - **AI-Powered Risk Scoring**: Real-time risk assessment (0-100) with detailed explanations and confidence scores
 - **Anomaly Detection**: Statistical outlier detection using Z-score and IQR methods with severity classification
 - **Predictive Forecasting**: 30-day risk predictions with trend analysis and confidence intervals
